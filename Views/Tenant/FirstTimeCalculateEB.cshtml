@@ -1,0 +1,23 @@
+﻿@model RentAutomation.Models.Tenant
+
+@{
+    ViewData["Title"] = "First Time Calculate EB";
+}
+
+<h1>First Time EB Calculation</h1>
+
+<form asp-action="CalculateEB" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label for="currentMonthUnit">Current Month Reading</label>
+        <input type="number" name="currentMonthUnit" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="previousMonthUnit">Previous Month Reading</label>
+        <input type="number" name="previousMonthUnit" class="form-control" required />
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Calculate</button>
+</form>

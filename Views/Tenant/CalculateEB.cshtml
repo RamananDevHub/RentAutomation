@@ -1,0 +1,36 @@
+﻿@model RentAutomation.Models.Tenant
+
+@{
+    ViewData["Title"] = "Calculate EB";
+}
+
+<h1>Calculate EB</h1>
+
+<form asp-action="CalculateEB" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="form-group">
+        <label for="currentMonthUnit">Current Month Reading:</label>
+        <input type="number" class="form-control" id="currentMonthUnit" name="currentMonthUnit" value="@Model.CurrentMonthUnit" required />
+    </div>
+    <div class="form-group">
+        <label for="billingPeriod">Billing Period:</label>
+        <input type="date" class="form-control" id="billingPeriod" name="billingPeriod" value="@Model.BillingPeriod.ToString("yyyy-MM-dd")" required />
+
+        @if (Model.TenantHouseNo == 9)
+        {
+            <div class="form-group">
+                <label for="currentMotorReading">Current Motor Reading</label>
+                <input type="number" class="form-control" id="currentMotorReading" name="currentMotorReading" value="@Model.CurrentMotorReading" required />
+            </div>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Calculate</button>
+</form>
+
+<div>
+    <h3>Current Reading: @Model.CurrentMonthUnit</h3>
+    <h3>Previous Reading: @Model.PreviousMonthUnit</h3>
+    <h3>Units Used: @Model.UnitsUsed</h3>
+    <h3>EB Bill: @Model.EbBill</h3>
+    <h3>Total Bill: @Model.TotalBill</h3>
+</div>

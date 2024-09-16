@@ -1,0 +1,48 @@
+﻿@model IEnumerable<RentAutomation.Models.Tenant>
+
+@{
+    ViewData["Title"] = "Tenant List";
+}
+
+<h1>Tenant List</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Tenant</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>House No</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tenant in Model)
+        {
+            <tr>
+                <td>@tenant.TenantHouseNo</td>
+                <td>@tenant.TenantName</td>
+                <td>@tenant.TenantPhone</td>
+              
+                <td>
+                    <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-info">Calculate Rent</a>
+                    <!--<a asp-action="GenerateBill" asp-route-id="@tenant.Id" class="btn btn-info">View Rent Slip</a>-->
+                    <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-info">View History</a>
+
+                
+                    <a asp-action="ViewBills" asp-route-id="@tenant.Id" class="btn btn-primary">View Rent Slip</a>
+                
+                    <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-info">Reset</a>
+                    <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,17 @@
+﻿@model RentAutomation.Models.Tenant
+
+@{
+    ViewData["Title"] = "Reset EB Readings";
+}
+
+<h2>Reset EB Readings</h2>
+
+<div class="alert alert-warning" role="alert">
+    <strong>Warning!</strong> You are about to reset the EB readings for Tenant <strong>@Model.TenantName</strong> (House No: @Model.TenantHouseNo). This action cannot be undone.
+</div>
+
+<form asp-action="ResetEBConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+ <button type="submit" class="btn btn-danger">Reset EB Readings</button>
+    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+</form>

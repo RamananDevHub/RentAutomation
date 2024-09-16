@@ -1,0 +1,33 @@
+﻿@model IEnumerable<RentAutomation.Models.Bill>
+
+<h2>Rent Bill History</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Bill Generation Date</th>
+            <th>Previous Month Unit</th>
+            <th>Current Month Unit</th>
+            <th>Units Used</th>
+            <th>EB Bill</th>
+            <th>Rent</th>
+            <th>Water Charges</th>
+            <th>Total Bill</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bill in Model)
+        {
+            <tr>
+                <td>@bill.BillGenerationDate.ToString("dd-MM-yyyy")</td>
+                <td>@bill.PreviousMonthUnit</td>
+                <td>@bill.CurrentMonthUnit</td>
+                <td>@bill.UnitsUsed</td>
+                <td>@bill.EbBill</td>
+                <td>@bill.Rent</td>
+                <td>@bill.Water</td>
+                <td>@bill.TotalBill</td>
+            </tr>
+        }
+    </tbody>
+</table>

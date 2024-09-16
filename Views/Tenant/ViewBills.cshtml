@@ -1,0 +1,84 @@
+﻿@model RentAutomation.Models.ViewBillsViewModel
+
+<h2>View Bills for Tenant @Model.Id</h2>
+
+<!-- Form to select the billing period -->
+<form asp-action="ViewBills" method="get">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label for="Month">Select Month:</label>
+        <input type="number" name="month" min="1" max="12" value="@Model.BillingPeriod.Month" required class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label for="Year">Select Year:</label>
+        <input type="number" name="year" value="@Model.BillingPeriod.Year" required class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">View Rent Slip</button>
+</form>
+
+<!-- Display bills if available -->
+@if (Model.Bills != null && Model.Bills.Any())
+{
+    <h3>Rent Slip for: @Model.BillingPeriod.ToString("MMMM yyyy")</h3>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bill in Model.Bills)
+            {
+                <tr>
+                    <td>Rent For</td>
+                    <td>@bill.BillingDate.ToString("MMMM yyyy")</td>
+                </tr>
+                <tr>
+                    <td>Rent Amount</td>
+                    <td>@bill.Rent.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>Water Charges</td>
+                    <td>@bill.Water.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>Current Month Reading</td>
+                    <td>@bill.CurrentMonthUnit.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>Previous Month Reading</td>
+                    <td>@bill.PreviousMonthUnit.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>Units Consumed</td>
+                    <td>@bill.UnitsUsed.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>Unit Rate</td>
+                    <td>@bill.EbPerUnit.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>EB Charges Calculation</td>
+                    <td>@bill.UnitsUsed.ToString("0") * @bill.EbPerUnit.ToString("0") = @bill.EbBill.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td>Rent Calculation</td>
+                    <td>@bill.Rent.ToString("0") + @bill.Water.ToString("0") + @bill.EbBill.ToString("0") = @bill.TotalBill.ToString("0")</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Rent Payable</strong></td>
+                    <td><strong>@bill.TotalBill.ToString("0")</strong></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No bills found for the selected period.</p>
+}

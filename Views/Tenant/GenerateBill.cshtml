@@ -1,0 +1,73 @@
+﻿@model RentAutomation.Models.Tenant
+
+@{
+    ViewData["Title"] = "Generate Bill";
+    var currentDate = DateTime.Now;
+}
+
+<h1>Rent Slip</h1>
+
+    <form asp-action="GenerateBill" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+
+<div>
+    <!-- Display the current date at the top -->
+   
+
+    <h2>Tenant: @Model.TenantName</h2>  <p><strong>Bill Generation Date:</strong> @currentDate.ToString("MMMM dd, yyyy")</p>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Rent For</td>
+                <td>@Model.BillingPeriod.ToString("MMMM yyyy")</td>
+            </tr>
+            <tr>
+                <td>Rent Amount</td>
+                <td>@Model.Rent.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>Water Charges</td>
+                <td>@Model.Water.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>Current Month Reading</td>
+                <td>@Model.CurrentMonthUnit.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>Previous Month Reading</td>
+                <td>@Model.PreviousMonthUnit.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>Units Consumed</td>
+                <td>@Model.CurrentMonthUnit.ToString("0") - @Model.PreviousMonthUnit.ToString("0") = @Model.UnitsUsed.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>Unit Rate</td>
+                <td>@Model.EbPerUnit.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>EB Charges Calculation</td>
+                <td>@Model.UnitsUsed.ToString("0") * @Model.EbPerUnit.ToString("0") = @Model.EbBill.ToString("0")</td>
+            </tr>
+            <tr>
+                <td>Rent Calculation</td>
+                <td>@Model.Rent.ToString("0") + @Model.Water.ToString("0") + @Model.EbBill.ToString("0") = @Model.TotalBill.ToString("0")</td>
+            </tr>
+            <tr>
+                <td><strong>Total Rent Payable</strong></td>
+                <td><strong>@Model.TotalBill.ToString("0")</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a asp-action="Index" asp-route-id="@Model.Id" class="btn btn-secondary">Back to List</a>
+</div>
+</form>
+
