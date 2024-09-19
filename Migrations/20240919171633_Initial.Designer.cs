@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RentAutomation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240916111148_init")]
-    partial class init
+    [Migration("20240919171633_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,9 +89,6 @@ namespace RentAutomation.Migrations
                     b.Property<int>("CurrentMonthUnit")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CurrentMotorReading")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Deposit")
                         .HasColumnType("decimal(18,2)");
 
@@ -101,10 +98,10 @@ namespace RentAutomation.Migrations
                     b.Property<bool>("IsBillGenerated")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PreviousMonthUnit")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("LastEBCalculationDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("PreviousMotorReading")
+                    b.Property<int>("PreviousMonthUnit")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Rent")

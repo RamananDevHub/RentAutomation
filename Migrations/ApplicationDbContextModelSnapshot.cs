@@ -86,9 +86,6 @@ namespace RentAutomation.Migrations
                     b.Property<int>("CurrentMonthUnit")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CurrentMotorReading")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Deposit")
                         .HasColumnType("decimal(18,2)");
 
@@ -102,9 +99,6 @@ namespace RentAutomation.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PreviousMonthUnit")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("PreviousMotorReading")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Rent")

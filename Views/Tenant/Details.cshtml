@@ -7,31 +7,48 @@
 <h1>Tenant Details</h1>
 
 <div>
-    <dl class="row">
-        <dt class="col-sm-2">ID</dt>
-        <dd class="col-sm-10">@Model.Id</dd>
-
-        <dt class="col-sm-2">Name</dt>
-        <dd class="col-sm-10">@Model.TenantName</dd>
-
-        <dt class="col-sm-2">Phone</dt>
-        <dd class="col-sm-10">@Model.TenantPhone</dd>
-
-        <dt class="col-sm-2">House No</dt>
-        <dd class="col-sm-10">@Model.TenantHouseNo</dd>
-
-        <dt class="col-sm-2">Rent</dt>
-        <dd class="col-sm-10">@Model.Rent</dd>
-
-        <dt class="col-sm-2">Deposit</dt>
-        <dd class="col-sm-10">@Model.Deposit</dd>
-
-        <dt class="col-sm-2">EB Per Unit</dt>
-        <dd class="col-sm-10">@Model.EbPerUnit</dd>
-
-        <dt class="col-sm-2">Water</dt>
-        <dd class="col-sm-10">@Model.Water</dd>
- </dl>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ID</td>
+                <td>@Model.Id</td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>@Model.TenantName</td>
+            </tr>
+            <tr>
+                <td>Phone</td>
+                <td>@Model.TenantPhone</td>
+            </tr>
+            <tr>
+                <td>House No</td>
+                <td>@Model.TenantHouseNo</td>
+            </tr>
+            <tr>
+                <td>Rent</td>
+                <td>@Model.Rent</td>
+            </tr>
+            <tr>
+                <td>Deposit</td>
+                <td>@Model.Deposit</td>
+            </tr>
+            <tr>
+                <td>EB Per Unit</td>
+                <td>@Model.EbPerUnit</td>
+            </tr>
+            <tr>
+                <td>Water</td>
+                <td>@Model.Water</td>
+            </tr>
+        </tbody>
+    </table>
 
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
     <a asp-action="Index" class="btn btn-primary">Back to List</a>

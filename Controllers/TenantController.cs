@@ -230,6 +230,8 @@ namespace RentAutomation.Controllers
                     BillGenerationDate = DateTime.Now, // Set the BillGenerationDate to the current date
                     PreviousMonthUnit = tenant.PreviousMonthUnit,
                     CurrentMonthUnit = tenant.CurrentMonthUnit,
+                 
+
                     UnitsUsed = unitsUsed,
                     EbPerUnit = tenant.EbPerUnit,
                     EbBill = ebBill,

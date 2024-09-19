@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RentAutomation.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -28,10 +28,9 @@ namespace RentAutomation.Migrations
                     CurrentMonthUnit = table.Column<int>(type: "int", nullable: false),
                     BillingPeriod = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RentBillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CurrentMotorReading = table.Column<int>(type: "int", nullable: true),
-                    PreviousMotorReading = table.Column<int>(type: "int", nullable: true),
                     IsBillGenerated = table.Column<bool>(type: "bit", nullable: false),
-                    BillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    BillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastEBCalculationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

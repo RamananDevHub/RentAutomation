@@ -22,8 +22,7 @@ public class Tenant
     public DateTime RentBillGenerationDate { get; set; }
 
     // Motor readings (specific to House No. 9)
-    public int? CurrentMotorReading { get; set; }
-    public int? PreviousMotorReading { get; set; }
+  
     public bool IsBillGenerated { get; set; } // Track if bill is generated
 
     public DateTime? BillGenerationDate { get; set; } // Optional: Track the date of bill generation

@@ -16,13 +16,7 @@
         <label for="billingPeriod">Billing Period:</label>
         <input type="date" class="form-control" id="billingPeriod" name="billingPeriod" value="@Model.BillingPeriod.ToString("yyyy-MM-dd")" required />
 
-        @if (Model.TenantHouseNo == 9)
-        {
-            <div class="form-group">
-                <label for="currentMotorReading">Current Motor Reading</label>
-                <input type="number" class="form-control" id="currentMotorReading" name="currentMotorReading" value="@Model.CurrentMotorReading" required />
-            </div>
-        }
+   
     </div>
     <button type="submit" class="btn btn-primary">Calculate</button>
 </form>
