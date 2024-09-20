@@ -9,6 +9,7 @@ public class Tenant
     public string TenantName { get; set; }
     public string TenantPhone { get; set; }
     public int TenantHouseNo { get; set; }
+    public DateTime TenancyStartDate { get; set; }
     public decimal Rent { get; set; }
     public decimal Deposit { get; set; }
     public decimal EbPerUnit { get; set; }

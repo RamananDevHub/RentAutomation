@@ -5,6 +5,7 @@
 <table class="table table-bordered">
     <thead>
         <tr>
+            <th>Rent For</th>
             <th>Bill Generation Date</th>
             <th>Previous Month Unit</th>
             <th>Current Month Unit</th>
@@ -19,6 +20,7 @@
         @foreach (var bill in Model)
         {
             <tr>
+                <td>@bill.BillingDate.ToString("MMMM yyyy")</td>
                 <td>@bill.BillGenerationDate.ToString("dd-MM-yyyy")</td>
                 <td>@bill.PreviousMonthUnit</td>
                 <td>@bill.CurrentMonthUnit</td>

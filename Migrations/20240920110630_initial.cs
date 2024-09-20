@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RentAutomation.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,6 +44,7 @@ namespace RentAutomation.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TenantId = table.Column<int>(type: "int", nullable: false),
+                    TenantName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BillingDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PreviousMonthUnit = table.Column<int>(type: "int", nullable: false),

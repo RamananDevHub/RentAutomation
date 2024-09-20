@@ -35,6 +35,10 @@
             @foreach (var bill in Model.Bills)
             {
                 <tr>
+                    <td>Tenant</td>
+                    <td>@bill.TenantName</td>
+                </tr>
+                <tr>
                     <td>Rent For</td>
                     <td>@bill.BillingDate.ToString("MMMM yyyy")</td>
                 </tr>

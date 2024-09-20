@@ -1,0 +1,22 @@
+﻿@model IEnumerable<dynamic>
+
+<h2>Monthly Revenue</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Total Revenue (INR)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var revenue in Model)
+        {
+            var monthDate = new DateTime((int)revenue.Year, (int)revenue.Month, 1);
+            <tr>
+                <td>@monthDate.ToString("MMMM yyyy")</td>
+                <td>₹ @revenue.TotalRevenue.ToString("N2")</td>
+            </tr>
+        }
+    </tbody>
+</table>

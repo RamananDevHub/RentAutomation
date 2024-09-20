@@ -226,6 +226,7 @@ namespace RentAutomation.Controllers
                 var bill = new Bill
                 {
                     TenantId = tenant.Id,
+                    TenantName= tenant.TenantName,
                     BillingDate = tenant.BillingPeriod,
                     BillGenerationDate = DateTime.Now, // Set the BillGenerationDate to the current date
                     PreviousMonthUnit = tenant.PreviousMonthUnit,
@@ -272,6 +273,7 @@ namespace RentAutomation.Controllers
             var viewModel = new ViewBillsViewModel
             {
                 Id = id,
+
                 BillingPeriod = new DateTime(selectedYear, selectedMonth, 1),
                 Bills = bills
             };
@@ -383,6 +385,26 @@ namespace RentAutomation.Controllers
             }
             return View(tenant);
         }
+
+        [HttpGet]
+        public IActionResult Revenue()
+        {
+            var monthlyRevenue = _context.BillTable
+                .GroupBy(b => new { b.BillingDate.Year, b.BillingDate.Month })
+                .Select(group => new MonthlyRevenueViewModel
+                {
+                    Year = group.Key.Year,
+                    Month = group.Key.Month,
+                    TotalRevenue = group.Sum(b => b.TotalBill)
+                })
+                .OrderByDescending(group => group.Year)
+                .ThenByDescending(group => group.Month)
+                .ToList();
+
+            return View(monthlyRevenue);
+        }
+
+
 
         //10. View all tenants
         [HttpGet]

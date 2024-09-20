@@ -7,6 +7,10 @@ public class Bill
 {
     public int Id { get; set; }
     public int TenantId { get; set; }
+
+    public string TenantName { get; set; }
+
+
     public DateTime BillingDate { get; set; } // Billing period (Month and Year)
     public DateTime BillGenerationDate { get; set; }
     public int PreviousMonthUnit { get; set; }

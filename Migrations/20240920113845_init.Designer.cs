@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RentAutomation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240919171633_Initial")]
-    partial class Initial
+    [Migration("20240920113845_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,6 +55,10 @@ namespace RentAutomation.Migrations
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TenantName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalBill")
                         .HasColumnType("decimal(18,2)");
@@ -108,6 +112,9 @@ namespace RentAutomation.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("RentBillGenerationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TenancyStartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TenantHouseNo")
