@@ -385,23 +385,41 @@ namespace RentAutomation.Controllers
             }
             return View(tenant);
         }
-
         [HttpGet]
         public IActionResult Revenue()
         {
-            var monthlyRevenue = _context.BillTable
-                .GroupBy(b => new { b.BillingDate.Year, b.BillingDate.Month })
-                .Select(group => new MonthlyRevenueViewModel
-                {
-                    Year = group.Key.Year,
-                    Month = group.Key.Month,
-                    TotalRevenue = group.Sum(b => b.TotalBill)
-                })
-                .OrderByDescending(group => group.Year)
-                .ThenByDescending(group => group.Month)
-                .ToList();
+            // Dummy data for January to July 2024
+            var random = new Random();
+            var monthlyRevenue = new List<MonthlyRevenueViewModel>
+    {
+        new MonthlyRevenueViewModel { Year = 2024, Month = 1, TotalRevenue = random.Next(90000, 100001) },
+        new MonthlyRevenueViewModel { Year = 2024, Month = 2, TotalRevenue = random.Next(90000, 100001) },
+        new MonthlyRevenueViewModel { Year = 2024, Month = 3, TotalRevenue = random.Next(90000, 100001) },
+        new MonthlyRevenueViewModel { Year = 2024, Month = 4, TotalRevenue = random.Next(90000, 100001) },
+        new MonthlyRevenueViewModel { Year = 2024, Month = 5, TotalRevenue = random.Next(90000, 100001) },
+        new MonthlyRevenueViewModel { Year = 2024, Month = 6, TotalRevenue = random.Next(90000, 100001) },
+        new MonthlyRevenueViewModel { Year = 2024, Month = 7, TotalRevenue = random.Next(90000, 100001) }
+    };
 
             return View(monthlyRevenue);
+        }
+
+        [HttpGet]
+        public IActionResult ElectricityUsage(string billingPeriod)
+        {
+            // You can filter by billingPeriod if needed
+            var tenants = _context.TenantTable
+                //.Where(t => t.BillingPeriod == billingPeriod) // Add this filter if necessary
+                .Select(t => new TenantElectricityUsageViewModel
+                {
+                    TenantHouseNo = t.TenantHouseNo,
+                    TenantName = t.TenantName,
+                    UnitsUsed = t.UnitsUsed,
+                    BillingPeriod = t.BillingPeriod // Select the billing period data
+                })
+                .ToList();
+
+            return View(tenants);
         }
 
 
