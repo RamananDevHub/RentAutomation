@@ -13,113 +13,118 @@
     <button type="submit">Filter</button>
 </form>
 
+<!-- Display the message if available -->
+@if (ViewBag.Message != null)
+{
+    <p>@ViewBag.Message</p>
+}
+
 <!-- Tenant Electricity Usage Table -->
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Billing Period</th>
-            <th>House No</th>
-            <th>Tenant Name</th>
-            <th>Electricity Units Used</th>
-        </tr>
-    </thead>
-    <tbody>
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Billing Period</th>
+                <th>House No</th>
+                <th>Tenant Name</th>
+                <th>Electricity Units Used</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tenant in Model)
+            {
+                <tr>
+                    <td>@tenant.BillingPeriod.ToString("MMMM yyyy")</td>
+                    <td>@tenant.TenantHouseNo</td>
+                    <td>@tenant.TenantName</td>
+                    <td>@tenant.UnitsUsed</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+    <!-- Chart Container -->
+    <div style="display: flex; justify-content: space-between;">
+        <div style="width: 48%;">
+            <h2>Electricity Usage per Tenant (Bar Chart)</h2>
+            <canvas id="barChart" width="400" height="200"></canvas>
+        </div>
+        <div style="width: 48%;">
+            <h2>Usage Distribution (Pie Chart)</h2>
+            <canvas id="pieChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.onload = function () {
+            const labels = [];
+            const data = [];
+
         @foreach (var tenant in Model)
         {
-            <tr>
-                <td>@tenant.BillingPeriod.ToString("MMMM yyyy")</td>
-                <td>@tenant.TenantHouseNo</td>
-                <td>@tenant.TenantName</td>
-                <td>@tenant.UnitsUsed</td>
-            </tr>
+            @:labels.push('@tenant.TenantName');
+            @:data.push(@tenant.UnitsUsed);
         }
-    </tbody>
-</table>
 
-
-<!-- Chart Container -->
-<div style="display: flex; justify-content: space-between;">
-    <div style="width: 48%;">
-        <h2>Electricity Usage per Tenant (Bar Chart)</h2>
-        <canvas id="barChart" width="400" height="200"></canvas>
-    </div>
-    <div style="width: 48%;">
-        <h2>Usage Distribution (Pie Chart)</h2>
-        <canvas id="pieChart" width="400" height="200"></canvas>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    window.onload = function () {
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        const labels = [];
-        const data = [];
-
-    @foreach (var tenant in Model)
-    {
-        @:labels.push('@tenant.TenantName');
-        @:data.push(@tenant.UnitsUsed);
-    }
-
+                    // Bar Chart
+                    const barCtx = document.getElementById('barChart').getContext('2d');
             const barChart = new Chart(barCtx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Electricity Units Used',
-                    data: data,
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true,
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Electricity Units Used',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        const pieCtx = document.getElementById('pieChart').getContext('2d');
-
-        const pieChart = new Chart(pieCtx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Electricity Usage Distribution',
-                    data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)',
-                        'rgba(100, 255, 100, 0.6)'
-                    ],
-                    borderColor: 'rgba(255, 255, 255, 1)',
-                    borderWidth: 1,
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString() + ' units';
+            // Pie Chart
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            const total = data.reduce((a, b) => a + b, 0);
+            const pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Electricity Usage Distribution',
+                        data: data,
+                        backgroundColor: data.map(() => `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.6)`),
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const percentage = (tooltipItem.raw / total * 100).toFixed(2);
+                                    return `${tooltipItem.label}: ${tooltipItem.raw.toLocaleString()} units (${percentage}%)`;
+                                }
                             }
                         }
                     }
                 }
-            }
-        });
-    };
-</script>
+            });
+        };
+    </script>
+}

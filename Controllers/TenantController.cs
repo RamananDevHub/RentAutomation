@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RentAutomation.Models;
 using System;
+using System.Globalization;
 using System.Linq;
 
 namespace RentAutomation.Controllers
@@ -112,12 +113,20 @@ namespace RentAutomation.Controllers
         public IActionResult FirstTimeCalculateEB(int id, int CurrentMonthUnit, int PreviousMonthUnit)
         {
             var tenant = _context.TenantTable.Find(id);
+         
+
             if (tenant != null)
             {
                 // Handle initialization if PreviousMonthUnit is zero
                 if (tenant.PreviousMonthUnit == 0)
                 {
                     tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
+                }
+
+                if (PreviousMonthUnit > CurrentMonthUnit)
+                {
+                    ModelState.AddModelError(string.Empty, "Previous month reading must be less than or equal to the current month reading.");
+                    return View("FirstTimeCalculateEB", new Tenant { Id = id }); // Re-render the view with an error message
                 }
 
                 // Calculate units used and EB bill
@@ -407,20 +416,46 @@ namespace RentAutomation.Controllers
         [HttpGet]
         public IActionResult ElectricityUsage(string billingPeriod)
         {
-            // You can filter by billingPeriod if needed
-            var tenants = _context.TenantTable
-                //.Where(t => t.BillingPeriod == billingPeriod) // Add this filter if necessary
-                .Select(t => new TenantElectricityUsageViewModel
+            if (!string.IsNullOrEmpty(billingPeriod))
+            {
+                // Parse the billingPeriod string (formatted as "yyyy-MM") into a DateTime object
+                DateTime selectedBillingPeriod;
+                if (DateTime.TryParseExact(billingPeriod, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out selectedBillingPeriod))
                 {
-                    TenantHouseNo = t.TenantHouseNo,
-                    TenantName = t.TenantName,
-                    UnitsUsed = t.UnitsUsed,
-                    BillingPeriod = t.BillingPeriod // Select the billing period data
-                })
-                .ToList();
+                    // Filter tenants by the selected billing period
+                    var tenants = _context.TenantTable
+                        .Where(t => t.BillingPeriod.Year == selectedBillingPeriod.Year &&
+                                    t.BillingPeriod.Month == selectedBillingPeriod.Month)
+                        .Select(t => new TenantElectricityUsageViewModel
+                        {
+                            TenantHouseNo = t.TenantHouseNo,
+                            TenantName = t.TenantName,
+                            UnitsUsed = t.UnitsUsed,
+                            BillingPeriod = t.BillingPeriod
+                        })
+                        .ToList();
 
-            return View(tenants);
+                    // Show the "no data" message only if the billing period is selected and no tenants were found
+                    if (!tenants.Any())
+                    {
+                        ViewBag.Message = "No data available for the selected billing period.";
+                    }
+
+                    return View(tenants);
+                }
+                else
+                {
+                    // If parsing fails, handle the error (optional)
+                    ViewBag.Message = "Invalid billing period format. Please select a valid period.";
+                    return View(new List<TenantElectricityUsageViewModel>());
+                }
+            }
+
+            // If no billing period is selected, do not display any message or data
+            return View(new List<TenantElectricityUsageViewModel>());
         }
+
+
 
 
 
