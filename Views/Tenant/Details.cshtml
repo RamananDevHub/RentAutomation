@@ -28,7 +28,7 @@
                 <td>@Model.TenantPhone</td>
             </tr>
             <tr>
-                <td>Since</td>
+                <td>Staying Since</td>
                 <td>@Model.TenancyStartDate.ToString("dd MMMM yyyy")</td>
 
             </tr>
@@ -56,5 +56,9 @@
     </table>
 
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
+    <a asp-action="CalculateEB" asp-route-id="@Model.Id" class="btn btn-info btn-sm">Calculate Rent</a>
+    <a asp-action="ViewHistory" asp-route-id="@Model.Id" class="btn btn-dark btn-sm">Bill History</a>
+    <a asp-action="ViewBills" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">View Rent Slip</a>
     <a asp-action="Index" class="btn btn-primary">Back to List</a>
 </div>

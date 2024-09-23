@@ -9,11 +9,10 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Create New Tenant</a>
     <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-success">View Monthly Revenue</a>
-    <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-success">View Monthly ElectricityUsage</a>
-
+    <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-info">View Monthly Electricity Usage</a>
 </p>
 
-<table class="table">
+<table class="table table-striped table-responsive">
     <thead>
         <tr>
             <th>House No</th>
@@ -31,21 +30,15 @@
                 <td>@tenant.TenantName</td>
                 <td>@tenant.TenantPhone</td>
                 <td>@tenant.TenancyStartDate.ToString("dd MMMM yyyy")</td>
-
-
                 <td>
-                    <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-info">Details</a>
-                    <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-info">Calculate Rent</a>
-                    <!--<a asp-action="GenerateBill" asp-route-id="@tenant.Id" class="btn btn-info">View Rent Slip</a>-->
-                    <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-info">View History</a>
-
-
-                    <a asp-action="ViewBills" asp-route-id="@tenant.Id" class="btn btn-primary">View Rent Slip</a>
-
-                    <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-info">Reset</a>
-                    <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                    <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-secondary btn-sm">Details</a>
+                    <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-warning btn-sm">Edit</a>
+                    <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-info btn-sm">Calculate Rent</a>
+                    <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-dark btn-sm">Bill History</a>
+                    <a asp-action="ViewBills" asp-route-id="@tenant.Id" class="btn btn-primary btn-sm">View Rent Slip</a>
+                    <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-secondary btn-sm">Reset</a>
+                    <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this tenant?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
             </tr>
