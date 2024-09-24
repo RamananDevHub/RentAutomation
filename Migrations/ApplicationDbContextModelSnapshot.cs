@@ -38,6 +38,9 @@ namespace RentAutomation.Migrations
                     b.Property<int>("CurrentMonthUnit")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentMotorReading")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("EbBill")
                         .HasColumnType("decimal(18,2)");
 
@@ -47,11 +50,18 @@ namespace RentAutomation.Migrations
                     b.Property<int>("PreviousMonthUnit")
                         .HasColumnType("int");
 
+                    b.Property<int>("PreviousMotorReading")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Rent")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TenantName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalBill")
                         .HasColumnType("decimal(18,2)");
@@ -86,6 +96,9 @@ namespace RentAutomation.Migrations
                     b.Property<int>("CurrentMonthUnit")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentMotorReading")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Deposit")
                         .HasColumnType("decimal(18,2)");
 
@@ -101,10 +114,16 @@ namespace RentAutomation.Migrations
                     b.Property<int>("PreviousMonthUnit")
                         .HasColumnType("int");
 
+                    b.Property<int>("PreviousMotorReading")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Rent")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("RentBillGenerationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TenancyStartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("TenantHouseNo")

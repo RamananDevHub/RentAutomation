@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RentAutomation.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,12 +20,15 @@ namespace RentAutomation.Migrations
                     TenantName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TenantPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TenantHouseNo = table.Column<int>(type: "int", nullable: false),
+                    TenancyStartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Rent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Deposit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EbPerUnit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Water = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PreviousMonthUnit = table.Column<int>(type: "int", nullable: false),
                     CurrentMonthUnit = table.Column<int>(type: "int", nullable: false),
+                    CurrentMotorReading = table.Column<int>(type: "int", nullable: false),
+                    PreviousMotorReading = table.Column<int>(type: "int", nullable: false),
                     BillingPeriod = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RentBillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsBillGenerated = table.Column<bool>(type: "bit", nullable: false),
@@ -50,6 +53,8 @@ namespace RentAutomation.Migrations
                     PreviousMonthUnit = table.Column<int>(type: "int", nullable: false),
                     CurrentMonthUnit = table.Column<int>(type: "int", nullable: false),
                     UnitsUsed = table.Column<int>(type: "int", nullable: false),
+                    CurrentMotorReading = table.Column<int>(type: "int", nullable: false),
+                    PreviousMotorReading = table.Column<int>(type: "int", nullable: false),
                     EbPerUnit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EbBill = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Rent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),

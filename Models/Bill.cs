@@ -16,6 +16,10 @@ public class Bill
     public int PreviousMonthUnit { get; set; }
     public int CurrentMonthUnit { get; set; }
     public int UnitsUsed { get; set; }
+
+    public int CurrentMotorReading { get; set; }
+
+    public int PreviousMotorReading { get; set; }
     public decimal EbPerUnit { get; set; }
     public decimal EbBill { get; set; }
     public decimal Rent { get; set; }

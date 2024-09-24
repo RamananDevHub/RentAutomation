@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace RentAutomation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240920113845_init")]
-    partial class init
+    [Migration("20240923060612_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,9 @@ namespace RentAutomation.Migrations
                     b.Property<int>("CurrentMonthUnit")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentMotorReading")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("EbBill")
                         .HasColumnType("decimal(18,2)");
 
@@ -48,6 +51,9 @@ namespace RentAutomation.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("PreviousMonthUnit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PreviousMotorReading")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Rent")
@@ -93,6 +99,9 @@ namespace RentAutomation.Migrations
                     b.Property<int>("CurrentMonthUnit")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentMotorReading")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Deposit")
                         .HasColumnType("decimal(18,2)");
 
@@ -106,6 +115,9 @@ namespace RentAutomation.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PreviousMonthUnit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PreviousMotorReading")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Rent")

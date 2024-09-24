@@ -1,90 +1,60 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RentAutomation.Models;
-
-public class Tenant
+namespace RentAutomation.Models
 {
-    public int Id { get; set; }
-    public string TenantName { get; set; }
-    public string TenantPhone { get; set; }
-    public int TenantHouseNo { get; set; }
-    public DateTime TenancyStartDate { get; set; }
-    public decimal Rent { get; set; }
-    public decimal Deposit { get; set; }
-    public decimal EbPerUnit { get; set; }
-    public decimal Water { get; set; }
-    public int PreviousMonthUnit { get; set; }
-    public int CurrentMonthUnit { get; set; }
-
-    // Property to specify the billing period (e.g., month and year)
-    public DateTime BillingPeriod { get; set; }
-
-    public DateTime RentBillGenerationDate { get; set; }
-
-    // Motor readings (specific to House No. 9)
-  
-    public bool IsBillGenerated { get; set; } // Track if bill is generated
-
-    public DateTime? BillGenerationDate { get; set; } // Optional: Track the date of bill generation
-
-    public DateTime LastEBCalculationDate { get; set; } // Track the last calculation date
-
-
-
-    // Method to calculate the units used
-    private int CalculateUnitsUsed()
+    public class Tenant
     {
-        // Step 1: Calculate the difference between the current and previous month units
-        int calculatedUnitsUsed = CurrentMonthUnit - PreviousMonthUnit;
+        public int Id { get; set; }
+        public string TenantName { get; set; }
+        public string TenantPhone { get; set; }
+        public int TenantHouseNo { get; set; }
+        public DateTime TenancyStartDate { get; set; }
+        public decimal Rent { get; set; }
+        public decimal Deposit { get; set; }
+        public decimal EbPerUnit { get; set; }
+        public decimal Water { get; set; }
+        public int PreviousMonthUnit { get; set; }
+        public int CurrentMonthUnit { get; set; }
+        public int CurrentMotorReading { get; set; }
+        public int PreviousMotorReading { get; set; }
 
-        // Debug log for checking the calculated value
-        Console.WriteLine($"Calculated Units Used: {calculatedUnitsUsed}");
+        public DateTime BillingPeriod { get; set; }
+        public DateTime RentBillGenerationDate { get; set; }
+        public bool IsBillGenerated { get; set; }
+        public DateTime? BillGenerationDate { get; set; }
+        public DateTime LastEBCalculationDate { get; set; }
 
-        // Step 2: Assign the calculated value to the unitsUsed variable
-        return calculatedUnitsUsed;
-    }
-
-    // Property to calculate the actual units based on specific logic
-    public int ActualUnits
-    {
-        get
+        // Calculate the units used with negative check
+        [NotMapped]
+        public int UnitsUsed
         {
-            int unitsUsed = CalculateUnitsUsed();
-            // Debug log for checking the value
-            Console.WriteLine($"Units Used: {unitsUsed}");
-            return unitsUsed;
-        }
-    }
+            get
+            {
+                int unitsUsed;
 
-    // Calculated properties (do not map to database)
-    [NotMapped]
-    public int UnitsUsed
-    {
-        get
-        {
-            int unitsUsed = CalculateUnitsUsed();
-            // Debug log for checking the value
-            Console.WriteLine($"Units Used: {unitsUsed}");
-            return unitsUsed;
-        }
-    }
+                if (TenantHouseNo == 9)
+                {
+                    // Special calculation for tenants with house number 9
+                    unitsUsed = (CurrentMonthUnit - PreviousMonthUnit) - (CurrentMotorReading - PreviousMotorReading);
+                }
+                else
+                {
+                    // Regular calculation for other tenants
+                    unitsUsed = CurrentMonthUnit - PreviousMonthUnit;
+                }
 
-    [NotMapped]
-    public decimal EbBill
-    {
-        get
-        {
-            return UnitsUsed * EbPerUnit;
+                // Ensure no negative units used
+                return Math.Max(unitsUsed, 0);
+            }
         }
-    }
 
-    [NotMapped]
-    public decimal TotalBill
-    {
-        get
-        {
-            return Rent + Water + EbBill;
-        }
+        // Calculated EB Bill based on units used
+        [NotMapped]
+        public decimal EbBill => UnitsUsed * EbPerUnit;
+
+        // Total Bill calculation
+        [NotMapped]
+        public decimal TotalBill => Rent + Water + EbBill;
     }
 }

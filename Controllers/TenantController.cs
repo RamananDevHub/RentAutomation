@@ -63,10 +63,23 @@ namespace RentAutomation.Controllers
             return NotFound();
         }
 
+        private int CalculateUnitsUsed(Tenant tenant, int currentMonthUnit, int previousMonthUnit, int currentMotorReading, int previousMotorReading)
+        {
+            if (tenant.TenantHouseNo == 9)
+            {
+                return (currentMonthUnit - previousMonthUnit) - (currentMotorReading - previousMotorReading);
+            }
+            return currentMonthUnit - previousMonthUnit;
+        }
+
+
         [HttpPost]
-        public IActionResult CalculateEB(int id, int currentMonthUnit, int previousMonthUnit)
+        public IActionResult CalculateEB(int id, int currentMonthUnit, int previousMonthUnit, int currentMotorReading, int previousMotorReading)
         {
             var tenant = _context.TenantTable.Find(id);
+
+
+
             if (tenant != null)
             {
                 // Handle first-time calculations
@@ -75,6 +88,8 @@ namespace RentAutomation.Controllers
                     // First-time calculation
                     tenant.PreviousMonthUnit = previousMonthUnit;
                     tenant.CurrentMonthUnit = currentMonthUnit;
+                    tenant.PreviousMotorReading= previousMotorReading;
+                    tenant.CurrentMotorReading= currentMotorReading;
                 }
                 else
                 {
@@ -83,16 +98,23 @@ namespace RentAutomation.Controllers
                     tenant.CurrentMonthUnit = currentMonthUnit;
                 }
 
+                // Now the UnitsUsed property will automatically calculate the value
+                int unitsUsed = tenant.UnitsUsed;
+
                 // Update the billing period to the previous month
                 tenant.BillingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
                 // Save changes to the database
                 _context.SaveChanges();
+
                 // Redirect to GenerateBill view
                 return RedirectToAction("GenerateBill", new { id = tenant.Id });
             }
             return NotFound();
         }
+
+
+
 
         //3.First EB calculation for all tenants
 
@@ -110,38 +132,44 @@ namespace RentAutomation.Controllers
             return NotFound();
         }
         [HttpPost]
-        public IActionResult FirstTimeCalculateEB(int id, int CurrentMonthUnit, int PreviousMonthUnit)
+        public IActionResult FirstTimeCalculateEB(int id, int CurrentMonthUnit, int PreviousMonthUnit, int CurrentMotorReading, int PreviousMotorReading)
         {
             var tenant = _context.TenantTable.Find(id);
-         
-
             if (tenant != null)
             {
+                if (PreviousMonthUnit > CurrentMonthUnit)
+                {
+                    ModelState.AddModelError(string.Empty, "Previous month reading must be less than or equal to the current month reading.");
+                    return View("FirstTimeCalculateEB", tenant); // Re-render the view with an error message
+                }
+
                 // Handle initialization if PreviousMonthUnit is zero
                 if (tenant.PreviousMonthUnit == 0)
                 {
                     tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
                 }
 
-                if (PreviousMonthUnit > CurrentMonthUnit)
+                // Calculate units used based on house number
+                int calculatedUnitsUsed;
+                if (tenant.TenantHouseNo == 9)
                 {
-                    ModelState.AddModelError(string.Empty, "Previous month reading must be less than or equal to the current month reading.");
-                    return View("FirstTimeCalculateEB", new Tenant { Id = id }); // Re-render the view with an error message
+                    // Special calculation for tenants with house number 9
+                    calculatedUnitsUsed = (CurrentMonthUnit - PreviousMonthUnit) - (CurrentMotorReading - PreviousMotorReading);
+                }
+                else
+                {
+                    // Regular calculation for other tenants
+                    calculatedUnitsUsed = CurrentMonthUnit - PreviousMonthUnit;
                 }
 
-                // Calculate units used and EB bill
-                int calculatedUnitsUsed = tenant.CurrentMonthUnit - tenant.PreviousMonthUnit;
+                // Calculate EB bill
                 var ebBill = calculatedUnitsUsed * tenant.EbPerUnit;
 
-
-
-
-                // Optionally save updates to the database
+                // Save updates to the database
                 _context.SaveChanges();
 
                 // Set values to ViewBag for display
                 ViewBag.UnitsUsed = calculatedUnitsUsed;
-                ViewBag.PreviousMonthUnit = tenant.PreviousMonthUnit;
                 ViewBag.EbBill = ebBill;
 
                 // Redirect to GenerateBill view
@@ -149,6 +177,7 @@ namespace RentAutomation.Controllers
             }
             return NotFound();
         }
+
 
 
         //4.Subsequent EB calculation for all tenants
@@ -173,8 +202,9 @@ namespace RentAutomation.Controllers
             return NotFound();
         }
 
+        
         [HttpPost]
-        public IActionResult SubsequentCalculateEB(int id, int currentMonthUnit)
+        public IActionResult SubsequentCalculateEB(int id, int currentMonthUnit, int currentMotorReading, int previousMotorReading)
         {
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
@@ -183,15 +213,21 @@ namespace RentAutomation.Controllers
                 tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
                 tenant.CurrentMonthUnit = currentMonthUnit;
 
-                // Calculate units used (without saving it as a property)
-                int unitsUsed = tenant.CurrentMonthUnit - tenant.PreviousMonthUnit;
+                // Calculate units used based on house number
+                int unitsUsed;
+                if (tenant.TenantHouseNo == 9)
+                {
+                    // Special calculation for tenants with house number 9
+                    unitsUsed = (currentMonthUnit - tenant.PreviousMonthUnit) - (currentMotorReading - previousMotorReading);
+                }
+                else
+                {
+                    // Regular calculation for other tenants
+                    unitsUsed = currentMonthUnit - tenant.PreviousMonthUnit;
+                }
 
-                // Calculate EB bill (without saving it as a property)
+                // Calculate EB bill
                 var ebBill = unitsUsed * tenant.EbPerUnit;
-
-
-
-
 
                 // Save other necessary changes to the database
                 _context.SaveChanges();
@@ -202,7 +238,6 @@ namespace RentAutomation.Controllers
 
                 // Redirect to GenerateBill view
                 return RedirectToAction("GenerateBill", new { id = tenant.Id });
-
             }
             return NotFound();
         }
@@ -210,7 +245,7 @@ namespace RentAutomation.Controllers
 
 
 
-        // 5.Generate Total Bill
+
         [HttpGet]
         public IActionResult GenerateBill(int id)
         {
@@ -223,25 +258,29 @@ namespace RentAutomation.Controllers
 
                 if (existingBill != null)
                 {
-                    return View("Error");
+                    return View("Error"); // Or handle existing bill case more gracefully
                 }
 
-                // Calculate units used and bill
-                var unitsUsed = tenant.UnitsUsed;
+                // Calculate units used (ensure to set CurrentMonthUnit and PreviousMonthUnit if needed)
+                var unitsUsed = tenant.UnitsUsed; // Ensure this property is calculated correctly based on the latest readings
+
+                // Calculate EB Bill
                 var ebBill = unitsUsed * tenant.EbPerUnit;
+
+                // Calculate Total Bill
                 var totalBill = tenant.Rent + tenant.Water + ebBill;
 
                 // Create a new bill
                 var bill = new Bill
                 {
                     TenantId = tenant.Id,
-                    TenantName= tenant.TenantName,
+                    TenantName = tenant.TenantName,
                     BillingDate = tenant.BillingPeriod,
-                    BillGenerationDate = DateTime.Now, // Set the BillGenerationDate to the current date
+                    BillGenerationDate = DateTime.Now,
                     PreviousMonthUnit = tenant.PreviousMonthUnit,
                     CurrentMonthUnit = tenant.CurrentMonthUnit,
-                 
-
+                    PreviousMotorReading = tenant.PreviousMotorReading,
+                    CurrentMotorReading = tenant.CurrentMotorReading,
                     UnitsUsed = unitsUsed,
                     EbPerUnit = tenant.EbPerUnit,
                     EbBill = ebBill,
@@ -255,11 +294,12 @@ namespace RentAutomation.Controllers
                 tenant.BillGenerationDate = DateTime.Now; // Update bill generation date
                 _context.SaveChanges();
 
+                // Store calculations in ViewBag for display in the view
                 ViewBag.UnitsUsed = unitsUsed;
                 ViewBag.EbBill = ebBill;
                 ViewBag.TotalBill = totalBill;
 
-                return View(tenant);
+                return View(tenant); // Pass tenant to the view for display
             }
             return NotFound();
         }
@@ -356,6 +396,8 @@ namespace RentAutomation.Controllers
                 // Reset the EB readings and units used
                 tenant.PreviousMonthUnit = 0;
                 tenant.CurrentMonthUnit = 0;
+                tenant.CurrentMotorReading = 0;
+                tenant.PreviousMotorReading = 0;
 
                 // Remove all bills related to the tenant
                 var bills = _context.BillTable.Where(b => b.TenantId == id).ToList();

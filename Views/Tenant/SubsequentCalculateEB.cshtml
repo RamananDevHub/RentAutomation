@@ -8,17 +8,30 @@
 <h1>Subsequent EB Calculation</h1>
 
 <form asp-action="SubsequentCalculateEB" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" asp-for="Id" />
 
     <div class="form-group">
-        <label for="PreviousMonthUnit">Previous Month Unit:</label>
-        <input type="number" name="PreviousMonthUnit" value="@Model.PreviousMonthUnit" class="form-control" readonly="@isBillGenerated" />
+        <label asp-for="PreviousMonthUnit">Previous Month Unit:</label>
+        <input asp-for="PreviousMonthUnit" class="form-control" readonly="@isBillGenerated" />
     </div>
 
     <div class="form-group">
-        <label for="CurrentMonthUnit">Current Month Unit:</label>
-        <input type="number" name="CurrentMonthUnit" value="@Model.CurrentMonthUnit" class="form-control" readonly="@isBillGenerated" />
+        <label asp-for="CurrentMonthUnit">Current Month Unit:</label>
+        <input asp-for="CurrentMonthUnit" class="form-control" readonly="@isBillGenerated" />
     </div>
+
+    @if (Model.TenantHouseNo == 9)
+    {
+        <div class="form-group">
+            <label asp-for="CurrentMotorReading">Current Motor Reading:</label>
+            <input asp-for="CurrentMotorReading" class="form-control" required readonly="@isBillGenerated" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PreviousMotorReading">Previous Motor Reading:</label>
+            <input asp-for="PreviousMotorReading" class="form-control" required readonly="@isBillGenerated" />
+        </div>
+    }
 
     @if (!isBillGenerated)
     {
@@ -31,7 +44,6 @@
 @if (isBillGenerated)
 {
     <div class="alert alert-info" role="alert">
-        Rent slip has already been generated for this month.
+        Rent slip has already been generated for this month. Calculations cannot be modified.
     </div>
 }
-

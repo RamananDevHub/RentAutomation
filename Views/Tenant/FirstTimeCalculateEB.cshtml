@@ -6,7 +6,6 @@
 
 <h1>First Time EB Calculation</h1>
 
-<!-- Validation Summary to show server-side errors -->
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="alert alert-danger">
@@ -15,29 +14,59 @@
 }
 
 <form id="ebCalculationForm" asp-action="CalculateEB" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" asp-for="Id" />
 
     <div class="form-group">
-        <label for="currentMonthUnit">Current Month Reading</label>
-        <input type="number" id="currentMonthUnit" name="currentMonthUnit" class="form-control" required />
+        <label asp-for="CurrentMonthUnit"></label>
+        <input type="number" asp-for="CurrentMonthUnit" class="form-control" required />
+        <span asp-validation-for="CurrentMonthUnit" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label for="previousMonthUnit">Previous Month Reading</label>
-        <input type="number" id="previousMonthUnit" name="previousMonthUnit" class="form-control" required />
+        <label asp-for="PreviousMonthUnit"></label>
+        <input type="number" asp-for="PreviousMonthUnit" class="form-control" required />
+        <span asp-validation-for="PreviousMonthUnit" class="text-danger"></span>
     </div>
+
+    @if (Model.TenantHouseNo == 9)
+    {
+        <div class="form-group">
+            <label asp-for="CurrentMotorReading">Current Motor Reading</label>
+            <input type="number" asp-for="CurrentMotorReading" class="form-control" required />
+            <span asp-validation-for="CurrentMotorReading" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PreviousMotorReading">Previous Motor Reading</label>
+            <input type="number" asp-for="PreviousMotorReading" class="form-control" required />
+            <span asp-validation-for="PreviousMotorReading" class="text-danger"></span>
+        </div>
+    }
 
     <button type="submit" class="btn btn-primary">Calculate</button>
 </form>
 
 <script>
     document.getElementById("ebCalculationForm").onsubmit = function (event) {
-        const currentMonthUnit = parseFloat(document.getElementById("currentMonthUnit").value);
-        const previousMonthUnit = parseFloat(document.getElementById("previousMonthUnit").value);
+        const currentMonthUnit = parseFloat(document.getElementById("CurrentMonthUnit").value);
+        const previousMonthUnit = parseFloat(document.getElementById("PreviousMonthUnit").value);
 
         if (previousMonthUnit > currentMonthUnit) {
             alert("Previous month reading must be less than or equal to the current month reading.");
             event.preventDefault(); // Prevent form submission
         }
+
+        // Additional validation for house number 9
+        if (currentMonthUnit && previousMonthUnit && Model.TenantHouseNo === 9) {
+            const currentMotorReading = parseFloat(document.getElementById("CurrentMotorReading").value);
+            const previousMotorReading = parseFloat(document.getElementById("PreviousMotorReading").value);
+
+            if (previousMotorReading > currentMotorReading) {
+                alert("Previous motor reading must be less than or equal to the current motor reading.");
+                event.preventDefault(); // Prevent form submission
+            }
+        }
     };
 </script>
+
+

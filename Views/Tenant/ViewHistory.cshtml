@@ -14,6 +14,8 @@
             <th>Rent</th>
             <th>Water Charges</th>
             <th>Total Bill</th>
+            <th>Current Motor Reading</th>
+            <th>Previous Motor Reading</th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +31,21 @@
                 <td>@bill.Rent</td>
                 <td>@bill.Water</td>
                 <td>@bill.TotalBill</td>
+
+                @* Assuming you have a way to access the tenant's house number *@
+                @* This could be through a property in the Bill model or a service call *@
+                var tenant = /* logic to get the tenant based on bill.TenantId or similar */;
+
+                if (tenant != null && tenant.TenantHouseNo == 9)
+                {
+                <td>@bill.CurrentMotorReading</td>
+                <td>@bill.PreviousMotorReading</td>
+                }
+                else
+                {
+                <td>-</td>
+                <td>-</td>
+                }
             </tr>
         }
     </tbody>
