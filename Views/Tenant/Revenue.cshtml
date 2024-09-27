@@ -1,108 +1,35 @@
-﻿@model IEnumerable<dynamic>
+﻿@model IEnumerable<MonthlyRevenueViewModel>
 
-@{
-    ViewData["Title"] = "Revenue Report";
+<h2>View Revenue Data</h2>
+
+@if (!Model.Any())
+{
+    <p>No data available.</p>
 }
-
-<h1>@ViewData["Title"]</h1>
-
-<!-- Revenue Table -->
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Month</th>
-            <th>Total Revenue (INR)</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var revenue in Model)
-        {
-            var monthDate = new DateTime((int)revenue.Year, (int)revenue.Month, 1);
+else
+{
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd;">
+        <thead style="background-color: #f2f2f2;">
             <tr>
-                <td>@monthDate.ToString("MMMM yyyy")</td>
-                <td>₹ @revenue.TotalRevenue.ToString("N2")</td>
+                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Year</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Month</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Total Revenue (₹)</th>
             </tr>
-        }
-    </tbody>
-</table>
-
-<!-- Chart Container -->
-<div style="display: flex; justify-content: space-between;">
-    <div style="width: 100%;">
-        <h2>Monthly Revenue (Line Chart)</h2>
-        <canvas id="lineChart" width="400" height="200"></canvas>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@latest"></script>
-<script>
-    window.onload = function () {
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        const labels = [];
-        const data = [];
-
-    @foreach (var revenue in Model)
-    {
-        var monthDate = new DateTime((int)revenue.Year, (int)revenue.Month, 1);
-        @:labels.push('@monthDate.ToString("MMMM yyyy")');
-        @:data.push(@revenue.TotalRevenue);
-    }
-
-            const lineChart = new Chart(lineCtx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Total Revenue (INR)',
-                    data: data,
-                    fill: true,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    tension: 0.3, // Smooth lines
-                    pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-                    pointBorderColor: '#fff',
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                return tooltipItem.label + ': ₹ ' + tooltipItem.raw.toLocaleString();
-                            }
+        </thead>
+        <tbody>
+            @foreach (var revenue in Model)
+            {
+                <tr style="border-bottom: 1px solid #ddd;">
+                    <td style="padding: 8px;">@revenue.Year</td>
+                    <td style="padding: 8px;">
+                        @{
+                            string monthName = new DateTime(revenue.Year, revenue.Month, 1).ToString("MMMM");
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.2)',
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.2)',
-                        }
-                    }
-                }
+                        @monthName
+                    </td>
+                    <td style="padding: 8px;">@revenue.TotalRevenue.ToString("N0")</td> <!-- Format as currency -->
+                </tr>
             }
-        });
-    };
-</script>
-
-<style>
-    canvas {
-        border: 1px solid rgba(75, 192, 192, 1);
-        border-radius: 8px;
-        background-color: #f8f9fa; /* Light background */
-        margin-top: 20px;
-    }
-</style>
+        </tbody>
+    </table>
+}

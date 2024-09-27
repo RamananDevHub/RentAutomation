@@ -1,6 +1,12 @@
 ﻿@model IEnumerable<RentAutomation.Models.Bill>
 
-<h2>Rent Bill History</h2>
+@{
+    ViewData["Title"] = "Rent Bill History";
+    // Assuming you have a dictionary or list of tenants fetched in the controller
+    var tenantDictionary = ViewBag.Tenants as Dictionary<int, RentAutomation.Models.Tenant>; // Assuming Tenant has Id and TenantHouseNo
+}
+
+<h2>@ViewData["Title"]</h2>
 
 <table class="table table-bordered">
     <thead>
@@ -13,39 +19,37 @@
             <th>EB Bill</th>
             <th>Rent</th>
             <th>Water Charges</th>
-            <th>Total Bill</th>
             <th>Current Motor Reading</th>
             <th>Previous Motor Reading</th>
+            <th>Total Bill</th>
+            
         </tr>
     </thead>
     <tbody>
         @foreach (var bill in Model)
         {
+            var tenant = tenantDictionary.ContainsKey(bill.TenantId) ? tenantDictionary[bill.TenantId] : null;
+
             <tr>
                 <td>@bill.BillingDate.ToString("MMMM yyyy")</td>
                 <td>@bill.BillGenerationDate.ToString("dd-MM-yyyy")</td>
                 <td>@bill.PreviousMonthUnit</td>
                 <td>@bill.CurrentMonthUnit</td>
                 <td>@bill.UnitsUsed</td>
-                <td>@bill.EbBill</td>
-                <td>@bill.Rent</td>
-                <td>@bill.Water</td>
-                <td>@bill.TotalBill</td>
-
-                @* Assuming you have a way to access the tenant's house number *@
-                @* This could be through a property in the Bill model or a service call *@
-                var tenant = /* logic to get the tenant based on bill.TenantId or similar */;
-
-                if (tenant != null && tenant.TenantHouseNo == 9)
+                <td>@bill.EbBill.ToString("N0")</td>
+                <td>@bill.Rent.ToString("N0")</td>
+                <td>@bill.Water.ToString("N0")</td>
+                @if (tenant != null && tenant.TenantHouseNo == 9)
                 {
-                <td>@bill.CurrentMotorReading</td>
-                <td>@bill.PreviousMotorReading</td>
+                    <td>@bill.CurrentMotorReading</td>
+                    <td>@bill.PreviousMotorReading</td>
                 }
                 else
                 {
-                <td>-</td>
-                <td>-</td>
+                    <td>Not Applicable</td>
+                    <td>Not Applicable</td>
                 }
+                <td>@bill.TotalBill.ToString("N0")</td>
             </tr>
         }
     </tbody>

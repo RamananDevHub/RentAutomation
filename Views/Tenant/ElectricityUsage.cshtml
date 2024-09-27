@@ -4,121 +4,185 @@
     ViewData["Title"] = "Tenant Electricity Usage Report";
 }
 
-<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        #barChart {
+            box-shadow: 0 0 10px rgba(57, 255, 20, 1), 0 0 20px rgba(57, 255, 20, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>@ViewData["Title"]</h1>
 
-<!-- Billing Period Selection -->
-<form method="get" action="/Tenant/ElectricityUsage" class="mb-3">
-    <label for="billingPeriod">Select Billing Period:</label>
-    <input type="month" id="billingPeriod" name="billingPeriod" required class="form-control d-inline-block w-auto">
-    <button type="submit" class="btn btn-primary">Filter</button>
-</form>
+        <!-- Billing Period Selection -->
+        <form method="get" action="/Tenant/ElectricityUsage" class="mb-3 row">
+            <div class="col-md-6">
+                <label for="billingPeriod">Select Billing Period:</label>
+                <input type="month" id="billingPeriod" name="billingPeriod" required class="form-control">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary mt-4">Filter</button>
+            </div>
+        </form>
 
-<!-- Display the message if available -->
-@if (ViewBag.Message != null)
-{
-    <p class="alert alert-info">@ViewBag.Message</p>
-}
+        <!-- Display the message if available -->
+        @if (ViewBag.Message != null)
+        {
+            <p class="alert alert-info">@ViewBag.Message</p>
+        }
 
-<!-- Tenant Electricity Usage Table -->
-@if (Model.Any())
-{
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Billing Period</th>
-                <th>House No</th>
-                <th>Tenant Name</th>
-                <th>Electricity Units Used</th>
-            </tr>
-        </thead>
-        <tbody>
+        <!-- Tenant Electricity Usage Table -->
+        @if (Model.Any())
+        {
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Billing Period</th>
+                        <th>House No</th>
+                        <th>Tenant Name</th>
+                        <th>Electricity Units Used</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tenant in Model)
+                    {
+                        <tr>
+                            <td>@tenant.BillingPeriod.ToString("MMMM yyyy")</td>
+                            <td>@tenant.TenantHouseNo</td>
+                            <td>@tenant.TenantName</td>
+                            <td>@tenant.UnitsUsed</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No data available for the selected billing period.</p>
+        }
+
+        <!-- Chart Container -->
+        <div style="width: 100%; margin-top: 30px;">
+            <h2>Electricity Usage by Tenant</h2>
+            <canvas id="barChart" width="400" height="200"></canvas>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+        <script>
+            window.onload = function () {
+                const labels = [];
+                const data = [];
+                const initialData = [];
+
             @foreach (var tenant in Model)
             {
-                <tr>
-                    <td>@tenant.BillingPeriod.ToString("MMMM yyyy")</td>
-                    <td>@tenant.TenantHouseNo</td>
-                    <td>@tenant.TenantName</td>
-                    <td>@tenant.UnitsUsed</td>
-                </tr>
+                @:labels.push('@tenant.TenantName');
+                @:data.push(@tenant.UnitsUsed);
+                @:initialData.push(0); // Set initial data to zero for animation
             }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No data available for the selected billing period.</p>
-}
 
-<!-- Chart Container -->
-<div style="width: 100%; margin-top: 30px;">
-    <h2>Electricity Usage by Tenant (Line Chart)</h2>
-    <canvas id="lineChart" width="400" height="200"></canvas>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    window.onload = function () {
-        const labels = [];
-        const data = [];
-
-    @foreach (var tenant in Model)
-    {
-        @:labels.push('@tenant.TenantName');
-        @:data.push(@tenant.UnitsUsed);
-    }
-
-            // Line Chart
-            const lineCtx = document.getElementById('lineChart').getContext('2d');
-        const lineChart = new Chart(lineCtx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Electricity Units Used',
-                    data: data,
-                    fill: false,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    tension: 0.1,
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-                    pointBorderColor: 'rgba(255, 255, 255, 1)',
-                    pointRadius: 5,
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Tenant Name'
-                        },
-                        ticks: {
-                            autoSkip: false // Ensure all tenant names are displayed
-                        }
+                            // Bar Chart
+                            const barCtx = document.getElementById('barChart').getContext('2d');
+                const barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Electricity Units Used',
+                            data: initialData, // Start with zeros
+                            backgroundColor: 'rgba(57, 255, 20, 0.6)', // Neon green
+                            borderColor: 'rgba(57, 255, 20, 1)', // Neon green border
+                            borderWidth: 2,
+                            hoverBackgroundColor: 'rgba(255, 0, 255, 0.8)', // Neon magenta on hover
+                            hoverBorderColor: 'rgba(255, 0, 255, 1)', // Neon magenta border on hover
+                            borderRadius: 10 // Rounded corners for a smooth effect
+                        }]
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Units Used'
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Tenant Name'
+                                },
+                                ticks: {
+                                    autoSkip: false // Ensure all tenant names are displayed
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Units Used'
+                                },
+                                beginAtZero: true
+                            }
                         },
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                return `${tooltipItem.label}: ${tooltipItem.raw.toLocaleString()} units`;
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return `${tooltipItem.label}: ${tooltipItem.raw.toLocaleString()} units`;
+                                    }
+                                }
+                            },
+                            // Add the data labels plugin configuration
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'start',
+                                formatter: (value) => value, // Display the value directly
+                                color: 'rgba(255, 255, 0, 1)', // Neon yellow for the label
+                                font: {
+                                    weight: 'bold',
+                                    size: '12'
+                                }
+                            },
+                            // Custom plugin to draw electric symbols above each bar
+                            afterDatasetsDraw: function (chart) {
+                                const ctx = chart.ctx;
+                                chart.data.datasets.forEach((dataset, i) => {
+                                    const meta = chart.getDatasetMeta(i);
+                                    meta.data.forEach((bar, index) => {
+                                        const value = dataset.data[index];
+                                        const x = bar.x;
+                                        const y = bar.y - 10; // Adjust this value for symbol position
+
+                                        // Draw electric symbol (lightning bolt)
+                                        ctx.save();
+                                        ctx.font = '20px FontAwesome'; // Use a font that supports your symbol
+                                        ctx.fillStyle = 'rgba(255, 255, 0, 1)'; // Neon yellow for the symbol
+                                        ctx.fillText('\uf0e7', x - 10, y); // Adjust positioning if needed
+                                        ctx.restore();
+                                    });
+                                });
                             }
                         }
                     }
+                });
+
+                // Function to update the chart data and animate
+                function updateChart() {
+                    barChart.data.datasets[0].data = data; // Set the actual values
+                    barChart.update(); // Trigger chart update with animation
                 }
-            }
-        });
-    };
-</script>
+
+                // Call updateChart to animate from zero to actual values after loading
+                updateChart();
+            };
+        </script>
+    </div>
+</body>
+</html>

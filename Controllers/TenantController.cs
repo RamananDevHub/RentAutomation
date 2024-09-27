@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RentAutomation.Models;
 using System;
@@ -332,20 +333,29 @@ namespace RentAutomation.Controllers
 
 
         //6.View Historical Data
+        // Controller Method
         [HttpGet]
-        public IActionResult ViewHistory(int id)
+        public async Task<IActionResult> ViewHistory(int id)
         {
-            // Fetch all bills related to the tenant
-            var tenantBills = _context.BillTable
+            // Fetch all bills related to the tenant asynchronously
+            var tenantBills = await _context.BillTable
                 .Where(b => b.TenantId == id)
                 .OrderByDescending(b => b.BillingDate)
-                .ToList();
+                .ToListAsync();
+
+            // Fetch tenant information
+            var tenants = await _context.TenantTable.ToListAsync(); // Assuming you have a Tenants DbSet
+            var tenantDictionary = tenants.ToDictionary(t => t.Id); // Creating a dictionary for quick lookup
 
             if (tenantBills.Any())
             {
+                ViewBag.Tenants = tenantDictionary; // Pass tenants to the view
                 return View(tenantBills); // Pass the bills to the view
             }
-            return NotFound(); // If no bills are found, return NotFound
+
+            // If no bills are found, return a user-friendly view
+            ViewBag.Message = "No bills found for this tenant.";
+            return View("NoBillsFound"); // Create a NoBillsFound view to inform the user
         }
 
 
@@ -437,23 +447,27 @@ namespace RentAutomation.Controllers
             return View(tenant);
         }
         [HttpGet]
+
+
         public IActionResult Revenue()
         {
-            // Dummy data for January to July 2024
-            var random = new Random();
-            var monthlyRevenue = new List<MonthlyRevenueViewModel>
-    {
-        new MonthlyRevenueViewModel { Year = 2024, Month = 1, TotalRevenue = random.Next(90000, 100001) },
-        new MonthlyRevenueViewModel { Year = 2024, Month = 2, TotalRevenue = random.Next(90000, 100001) },
-        new MonthlyRevenueViewModel { Year = 2024, Month = 3, TotalRevenue = random.Next(90000, 100001) },
-        new MonthlyRevenueViewModel { Year = 2024, Month = 4, TotalRevenue = random.Next(90000, 100001) },
-        new MonthlyRevenueViewModel { Year = 2024, Month = 5, TotalRevenue = random.Next(90000, 100001) },
-        new MonthlyRevenueViewModel { Year = 2024, Month = 6, TotalRevenue = random.Next(90000, 100001) },
-        new MonthlyRevenueViewModel { Year = 2024, Month = 7, TotalRevenue = random.Next(90000, 100001) }
-    };
+            var allRevenueData = _context.BillTable
+                .GroupBy(b => new { b.BillingDate.Year, b.BillingDate.Month })
+                .Select(g => new MonthlyRevenueViewModel
+                {
+                    Year = g.Key.Year,
+                    Month = g.Key.Month,
+                    TotalRevenue = g.Sum(b => b.TotalBill)
+                })
+                .OrderBy(r => r.Year).ThenBy(r => r.Month)
+                .ToList();
 
-            return View(monthlyRevenue);
+            return View(allRevenueData);
         }
+
+
+
+
 
         [HttpGet]
         public IActionResult ElectricityUsage(string billingPeriod)
