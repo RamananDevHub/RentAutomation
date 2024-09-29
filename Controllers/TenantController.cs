@@ -301,6 +301,7 @@ namespace RentAutomation.Controllers
                 ViewBag.TotalBill = totalBill;
 
                 return View(tenant); // Pass tenant to the view for display
+
             }
             return NotFound();
         }
