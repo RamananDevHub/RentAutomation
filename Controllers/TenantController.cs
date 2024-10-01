@@ -188,10 +188,14 @@ namespace RentAutomation.Controllers
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
+                // Get the current date
+                var currentDate = DateTime.Now;
+
                 // Check if a bill has already been generated for this billing period
                 var existingBill = _context.BillTable
                     .FirstOrDefault(b => b.TenantId == id &&
-                                         b.BillingDate == tenant.BillingPeriod);
+                                         b.BillingDate.Month == currentDate.Month &&
+                                         b.BillingDate.Year == currentDate.Year);
 
                 // Pass the status to the view
                 ViewBag.IsBillGenerated = existingBill != null;
@@ -203,38 +207,37 @@ namespace RentAutomation.Controllers
             return NotFound();
         }
 
-        
         [HttpPost]
-        public IActionResult SubsequentCalculateEB(int id, int currentMonthUnit, int currentMotorReading, int previousMotorReading)
+        public IActionResult SubsequentCalculateEB(int id, int currentMonthUnit, int currentMotorReading)
         {
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
-                // Update the previous month unit to the current value
-                tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
-                tenant.PreviousMotorReading = tenant.CurrentMotorReading;
+                // Update previous month unit with the last current month unit
+                int previousMonthUnit = tenant.CurrentMonthUnit; // Get the previous month unit from the database
+                int previousMotorReading = tenant.CurrentMotorReading; // Get the previous motor reading from the database
 
-                tenant.CurrentMonthUnit = currentMonthUnit;
+                // Update the current month unit and motor readings from input
+                tenant.CurrentMonthUnit = currentMonthUnit; // New input from user
                 tenant.CurrentMotorReading = currentMotorReading;
-
 
                 // Calculate units used based on house number
                 int unitsUsed;
                 if (tenant.TenantHouseNo == 9)
                 {
                     // Special calculation for tenants with house number 9
-                    unitsUsed = (currentMonthUnit - tenant.PreviousMonthUnit) - (currentMotorReading - previousMotorReading);
+                    unitsUsed = (currentMonthUnit - previousMonthUnit) - (currentMotorReading - previousMotorReading);
                 }
                 else
                 {
                     // Regular calculation for other tenants
-                    unitsUsed = currentMonthUnit - tenant.PreviousMonthUnit;
+                    unitsUsed = currentMonthUnit - previousMonthUnit;
                 }
 
                 // Calculate EB bill
                 var ebBill = unitsUsed * tenant.EbPerUnit;
 
-                // Save other necessary changes to the database
+                // Save changes to the database
                 _context.SaveChanges();
 
                 // Set values in ViewBag for display
@@ -249,17 +252,21 @@ namespace RentAutomation.Controllers
 
 
 
-
-
         [HttpGet]
         public IActionResult GenerateBill(int id)
         {
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
+                // Get the current date
+                var currentDate = DateTime.Now;
+
+                // Calculate the billing period (previous month)
+                var billingPeriod = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-1);
+
                 // Check if a bill has already been generated for this billing period
                 var existingBill = _context.BillTable
-                    .FirstOrDefault(b => b.TenantId == id && b.BillingDate == tenant.BillingPeriod);
+                    .FirstOrDefault(b => b.TenantId == id && b.BillingDate == billingPeriod);
 
                 if (existingBill != null)
                 {
@@ -280,7 +287,7 @@ namespace RentAutomation.Controllers
                 {
                     TenantId = tenant.Id,
                     TenantName = tenant.TenantName,
-                    BillingDate = tenant.BillingPeriod,
+                    BillingDate = billingPeriod,
                     BillGenerationDate = DateTime.Now,
                     PreviousMonthUnit = tenant.PreviousMonthUnit,
                     CurrentMonthUnit = tenant.CurrentMonthUnit,
@@ -309,7 +316,6 @@ namespace RentAutomation.Controllers
             }
             return NotFound();
         }
-
 
 
         [HttpGet]
