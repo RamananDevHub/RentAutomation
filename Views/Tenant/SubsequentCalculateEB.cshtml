@@ -12,24 +12,24 @@
 
     <div class="form-group">
         <label asp-for="PreviousMonthUnit">Previous Month Unit:</label>
-        <input asp-for="PreviousMonthUnit" class="form-control" readonly="@isBillGenerated" />
+        <input asp-for="PreviousMonthUnit" class="form-control" readonly />
     </div>
 
     <div class="form-group">
         <label asp-for="CurrentMonthUnit">Current Month Unit:</label>
-        <input asp-for="CurrentMonthUnit" class="form-control" readonly="@isBillGenerated" />
+        <input asp-for="CurrentMonthUnit" class="form-control" required />
     </div>
 
     @if (Model.TenantHouseNo == 9)
     {
         <div class="form-group">
             <label asp-for="CurrentMotorReading">Current Motor Reading:</label>
-            <input asp-for="CurrentMotorReading" class="form-control" required readonly="@isBillGenerated" />
+            <input asp-for="CurrentMotorReading" class="form-control" required />
         </div>
 
         <div class="form-group">
             <label asp-for="PreviousMotorReading">Previous Motor Reading:</label>
-            <input asp-for="PreviousMotorReading" class="form-control" required readonly="@isBillGenerated" />
+            <input asp-for="PreviousMotorReading" class="form-control" readonly />
         </div>
     }
 

@@ -212,7 +212,11 @@ namespace RentAutomation.Controllers
             {
                 // Update the previous month unit to the current value
                 tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
+                tenant.PreviousMotorReading = tenant.CurrentMotorReading;
+
                 tenant.CurrentMonthUnit = currentMonthUnit;
+                tenant.CurrentMotorReading = currentMotorReading;
+
 
                 // Calculate units used based on house number
                 int unitsUsed;
