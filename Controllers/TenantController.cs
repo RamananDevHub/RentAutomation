@@ -415,10 +415,10 @@ namespace RentAutomation.Controllers
             if (tenant != null)
             {
                 // Reset the EB readings and units used
-                tenant.PreviousMonthUnit = 0;
+                //tenant.PreviousMonthUnit = 0;
                 tenant.CurrentMonthUnit = 0;
                 tenant.CurrentMotorReading = 0;
-                tenant.PreviousMotorReading = 0;
+                //tenant.PreviousMotorReading = 0;
 
                 // Remove all bills related to the tenant
                 var bills = _context.BillTable.Where(b => b.TenantId == id).ToList();

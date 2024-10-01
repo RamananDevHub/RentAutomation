@@ -21,15 +21,18 @@
 
     @if (Model.TenantHouseNo == 9)
     {
-        <div class="form-group">
-            <label asp-for="CurrentMotorReading">Current Motor Reading:</label>
-            <input asp-for="CurrentMotorReading" id="currentMotorReading" class="form-control" required /> <!-- Input for Current Motor Reading -->
-        </div>
 
         <div class="form-group">
             <label for="previousMotorReading">Previous Motor Reading:</label>
             <input type="text" id="previousMotorReading" class="form-control" value="@Model.CurrentMotorReading" readonly /> <!-- Display Previous Motor Reading as read-only -->
         </div>
+
+        <div class="form-group">
+            <label for="CurrentMotorReading">Current Motor Reading:</label>
+            <input type="number" id="CurrentMotorReading" name="currentMotorReading" class="form-control" required /> <!-- Input for Current Motor Reading -->
+        </div>
+
+     
     }
 
     @if (ViewBag.IsBillGenerated == null || !ViewBag.IsBillGenerated)
