@@ -1,5 +1,16 @@
 ﻿@model RentAutomation.Models.ViewBillsViewModel
 
+<nav>
+    <ul style="list-style: none; padding: 0; margin: 0; display: flex;">
+        @for (int i = 1; i <= 10; i++)
+        {
+            <li style="margin-right: 10px;">
+                <a asp-action="ViewBills" asp-route-id="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+
 <h2>View Bills for Tenant @Model.Id</h2>
 
 <!-- Form to select the billing period -->

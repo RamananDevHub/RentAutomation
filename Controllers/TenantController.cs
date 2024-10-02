@@ -213,13 +213,17 @@ namespace RentAutomation.Controllers
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
-                // If this is not the first calculation, assign the previous month's unit automatically
-                tenant.PreviousMonthUnit = tenant.CurrentMonthUnit; // Assign last month's current unit as this month's previous unit
-                tenant.CurrentMonthUnit = currentMonthUnit; // The user inputs the new current month unit
+                // Check if the bill has already been generated for the current cycle
+                if (!tenant.IsBillGenerated)
+                {
+                    // If this is not the first calculation, assign the previous month's unit automatically
+                    tenant.PreviousMonthUnit = tenant.CurrentMonthUnit; // Assign last month's current unit as this month's previous unit
+                    tenant.CurrentMonthUnit = currentMonthUnit; // The user inputs the new current month unit
 
-                // For tenants with motor reading (TenantHouseNo == 9)
-                tenant.PreviousMotorReading = tenant.CurrentMotorReading; // Last month's motor reading becomes this month's previous motor reading
-                tenant.CurrentMotorReading = currentMotorReading; // User inputs the new motor reading
+                    // For tenants with motor reading (TenantHouseNo == 9)
+                    tenant.PreviousMotorReading = tenant.CurrentMotorReading; // Last month's motor reading becomes this month's previous motor reading
+                    tenant.CurrentMotorReading = currentMotorReading; // User inputs the new motor reading
+                }
 
                 // Calculate units used based on house number
                 int unitsUsed;
@@ -237,14 +241,16 @@ namespace RentAutomation.Controllers
                 // Calculate EB bill
                 var ebBill = unitsUsed * tenant.EbPerUnit;
 
-
-
                 // Save the updated values in the database
                 _context.SaveChanges();
 
                 // Set values in ViewBag for display in the next view
                 ViewBag.UnitsUsed = unitsUsed;
                 ViewBag.EbBill = ebBill;
+
+                // Set IsBillGenerated to true to indicate that the bill has been generated for the current cycle
+                tenant.IsBillGenerated = true;
+                _context.SaveChanges();
 
                 // Redirect to GenerateBill view with the updated tenant ID
                 return RedirectToAction("GenerateBill", new { id = tenant.Id });
@@ -253,7 +259,6 @@ namespace RentAutomation.Controllers
             // If the tenant is not found, return NotFound result
             return NotFound();
         }
-
 
 
 
