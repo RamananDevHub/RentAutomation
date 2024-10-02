@@ -27,9 +27,31 @@ else
                         }
                         @monthName
                     </td>
-                    <td style="padding: 8px;">@revenue.TotalRevenue.ToString("N0")</td> <!-- Format as currency -->
+                    <td style="padding: 8px;">₹ @FormatAsIndianCurrency(revenue.TotalRevenue)</td>
                 </tr>
             }
         </tbody>
     </table>
+}
+
+@functions {
+    // Method to format currency as per Indian numbering system
+    private string FormatAsIndianCurrency(decimal amount)
+    {
+        // Convert the amount to a long
+        long value = Convert.ToInt64(amount);
+
+        // Format the value with space as thousands separator
+        string result = value.ToString("#,0").Replace(",", " "); // Replace comma with space
+
+        // To handle the placement of commas for lakhs and crores
+        if (value >= 100000)
+        {
+            // Insert comma before the last 3 digits for Indian numbering
+            int length = result.Length;
+            result = result.Insert(length - 3, ",");
+        }
+
+        return result;
+    }
 }

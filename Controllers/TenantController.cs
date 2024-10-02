@@ -237,6 +237,8 @@ namespace RentAutomation.Controllers
                 // Calculate EB bill
                 var ebBill = unitsUsed * tenant.EbPerUnit;
 
+
+
                 // Save the updated values in the database
                 _context.SaveChanges();
 
