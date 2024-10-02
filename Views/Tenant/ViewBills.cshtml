@@ -58,9 +58,36 @@
                     <td>Previous Month Reading</td>
                     <td>@bill.PreviousMonthUnit.ToString("0")</td>
                 </tr>
+
+                @if (bill.TenantId == 9)
+                {
+                    <tr>
+                        <td>Current Motor Reading</td>
+                        <td>@bill.CurrentMotorReading.ToString("0")</td>
+                    </tr>
+                    <tr>
+                        <td>Previous Motor Reading</td>
+                        <td>@bill.PreviousMotorReading.ToString("0")</td>
+                    </tr>
+                }
+
                 <tr>
                     <td>Units Consumed</td>
-                    <td>@bill.CurrentMonthUnit.ToString("0") - @bill.PreviousMonthUnit.ToString("0") = @bill.UnitsUsed.ToString("0")</td>
+                    <td>
+                        @if (bill.TenantId==9)
+                        {
+                            // Special calculation for house number 9
+                            var unitsConsumed = (bill.CurrentMonthUnit - bill.PreviousMonthUnit) -
+                            (bill.CurrentMotorReading - bill.PreviousMotorReading);
+                            @unitsConsumed.ToString("0")
+                        }
+                        else
+                        {
+                            // Regular calculation for other tenants
+                            var unitsConsumed = (bill.CurrentMonthUnit - bill.PreviousMonthUnit);
+                            @unitsConsumed.ToString("0")
+                        }
+                    </td>
                 </tr>
                 <tr>
                     <td>Unit Rate</td>
@@ -68,12 +95,17 @@
                 </tr>
                 <tr>
                     <td>EB Charges Calculation</td>
-                    <td>@bill.UnitsUsed.ToString("0") * @bill.EbPerUnit.ToString("0") = @bill.EbBill.ToString("0")</td>
+                    <td>
+                        @($"{bill.UnitsUsed.ToString("0")} * {bill.EbPerUnit.ToString("0")} = {(bill.UnitsUsed * bill.EbPerUnit).ToString("0")}")
+                    </td>
                 </tr>
                 <tr>
                     <td>Rent Calculation</td>
-                    <td>@bill.Rent.ToString("0") + @bill.Water.ToString("0") + @bill.EbBill.ToString("0") = @bill.TotalBill.ToString("0")</td>
+                    <td>
+                        @($"{bill.Rent.ToString("0")} + {bill.Water.ToString("0")} + {bill.EbBill.ToString("0")} = {(bill.Rent + bill.Water + bill.EbBill).ToString("0")}")
+                    </td>
                 </tr>
+
                 <tr>
                     <td><strong>Total Rent Payable</strong></td>
                     <td><strong>@bill.TotalBill.ToString("0")</strong></td>

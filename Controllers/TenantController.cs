@@ -213,42 +213,45 @@ namespace RentAutomation.Controllers
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
-                // Update previous month unit with the last current month unit
-                int previousMonthUnit = tenant.CurrentMonthUnit; // Get the previous month unit from the database
-                int previousMotorReading = tenant.CurrentMotorReading; // Get the previous motor reading from the database
+                // If this is not the first calculation, assign the previous month's unit automatically
+                tenant.PreviousMonthUnit = tenant.CurrentMonthUnit; // Assign last month's current unit as this month's previous unit
+                tenant.CurrentMonthUnit = currentMonthUnit; // The user inputs the new current month unit
 
-                // Update the current month unit and motor readings from input
-                tenant.CurrentMonthUnit = currentMonthUnit; // New input from user
-                tenant.CurrentMotorReading = currentMotorReading;
+                // For tenants with motor reading (TenantHouseNo == 9)
+                tenant.PreviousMotorReading = tenant.CurrentMotorReading; // Last month's motor reading becomes this month's previous motor reading
+                tenant.CurrentMotorReading = currentMotorReading; // User inputs the new motor reading
 
                 // Calculate units used based on house number
                 int unitsUsed;
                 if (tenant.TenantHouseNo == 9)
                 {
                     // Special calculation for tenants with house number 9
-                    unitsUsed = (currentMonthUnit - previousMonthUnit) - (currentMotorReading - previousMotorReading);
+                    unitsUsed = (currentMonthUnit - tenant.PreviousMonthUnit) - (currentMotorReading - tenant.PreviousMotorReading);
                 }
                 else
                 {
                     // Regular calculation for other tenants
-                    unitsUsed = currentMonthUnit - previousMonthUnit;
+                    unitsUsed = currentMonthUnit - tenant.PreviousMonthUnit;
                 }
 
                 // Calculate EB bill
                 var ebBill = unitsUsed * tenant.EbPerUnit;
 
-                // Save changes to the database
+                // Save the updated values in the database
                 _context.SaveChanges();
 
-                // Set values in ViewBag for display
+                // Set values in ViewBag for display in the next view
                 ViewBag.UnitsUsed = unitsUsed;
                 ViewBag.EbBill = ebBill;
 
-                // Redirect to GenerateBill view
+                // Redirect to GenerateBill view with the updated tenant ID
                 return RedirectToAction("GenerateBill", new { id = tenant.Id });
             }
+
+            // If the tenant is not found, return NotFound result
             return NotFound();
         }
+
 
 
 
@@ -369,6 +372,9 @@ namespace RentAutomation.Controllers
             return View("NoBillsFound"); // Create a NoBillsFound view to inform the user
         }
 
+        
+
+
 
         //7.Delete
         [HttpGet]
@@ -415,10 +421,10 @@ namespace RentAutomation.Controllers
             if (tenant != null)
             {
                 // Reset the EB readings and units used
-                //tenant.PreviousMonthUnit = 0;
+                tenant.PreviousMonthUnit = 0;
                 tenant.CurrentMonthUnit = 0;
                 tenant.CurrentMotorReading = 0;
-                //tenant.PreviousMotorReading = 0;
+                tenant.PreviousMotorReading = 0;
 
                 // Remove all bills related to the tenant
                 var bills = _context.BillTable.Where(b => b.TenantId == id).ToList();
