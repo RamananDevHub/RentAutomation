@@ -3,8 +3,19 @@
 @{
     ViewData["Title"] = "Subsequent EB Calculation";
 }
+<nav>
+    <ul style="list-style: none; padding: 0; margin: 0; display: flex;">
+        @for (int i = 1; i <= 10; i++)
+        {
+            <li style="margin-right: 10px;">
+                <a asp-action="SubsequentCalculateEB" asp-route-id="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
 
-<h1>Subsequent EB Calculation</h1>
+<h1>Subsequent EB Calculation for @Model.TenantName</h1>
+
 
 <form asp-action="SubsequentCalculateEB" method="post">
     <input type="hidden" asp-for="Id" />

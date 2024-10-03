@@ -458,20 +458,22 @@ namespace RentAutomation.Controllers
             }
             return NotFound();
         }
-
         [HttpPost]
         public IActionResult Edit(Tenant tenant)
         {
             if (ModelState.IsValid)
             {
-                _context.TenantTable.Update(tenant);
+                var propertiesToUpdate = new string[] { "TenantName", "TenantPhone", "TenancyStartDate", "Rent", "Deposit", "EbPerUnit", "Water" };
+                _context.TenantTable.Attach(tenant);
+                foreach (var property in propertiesToUpdate)
+                {
+                    _context.Entry(tenant).Property(property).IsModified = true;
+                }
                 _context.SaveChanges();
                 return RedirectToAction("Details", new { id = tenant.Id });
             }
             return View(tenant);
         }
-        [HttpGet]
-
 
         public IActionResult Revenue()
         {
