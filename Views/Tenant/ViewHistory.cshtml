@@ -2,14 +2,13 @@
 
 @{
     ViewData["Title"] = "Rent Bill History";
-    // Assuming you have a dictionary or list of tenants fetched in the controller
-    var tenantDictionary = ViewBag.Tenants as Dictionary<int, RentAutomation.Models.Tenant>; // Assuming Tenant has Id and TenantHouseNo
+    var tenantDictionary = ViewBag.Tenants as Dictionary<int, RentAutomation.Models.Tenant>;
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="text-center">@ViewData["Title"]</h2>
 
-<table class="table table-bordered">
-    <thead>
+<table class="table table-striped table-hover table-bordered">
+    <thead class="table-primary">
         <tr>
             <th>Rent For</th>
             <th>Bill Generation Date</th>
@@ -22,7 +21,6 @@
             <th>Current Motor Reading</th>
             <th>Previous Motor Reading</th>
             <th>Total Bill</th>
-            
         </tr>
     </thead>
     <tbody>
@@ -36,9 +34,9 @@
                 <td>@bill.PreviousMonthUnit</td>
                 <td>@bill.CurrentMonthUnit</td>
                 <td>@bill.UnitsUsed</td>
-                <td>@bill.EbBill.ToString("N0")</td>
-                <td>@bill.Rent.ToString("N0")</td>
-                <td>@bill.Water.ToString("N0")</td>
+                <td class="text-end">@bill.EbBill.ToString("N0")</td>
+                <td class="text-end">@bill.Rent.ToString("N0")</td>
+                <td class="text-end">@bill.Water.ToString("N0")</td>
                 @if (tenant != null && tenant.TenantHouseNo == 9)
                 {
                     <td>@bill.CurrentMotorReading</td>
@@ -49,8 +47,30 @@
                     <td>Not Applicable</td>
                     <td>Not Applicable</td>
                 }
-                <td>@bill.TotalBill.ToString("N0")</td>
+                <td class="text-end">@bill.TotalBill.ToString("N0")</td>
             </tr>
         }
     </tbody>
 </table>
+
+<style>
+    /* Custom styles for the table */
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th {
+        background-color: #007bff; /* Bootstrap primary color */
+        color: white;
+        text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2; /* Light gray for even rows */
+    }
+
+    tbody tr:hover {
+        background-color: #e0e0e0; /* Light gray on hover */
+    }
+</style>
