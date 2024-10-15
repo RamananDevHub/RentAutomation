@@ -31,6 +31,6 @@ app.UseAuthorization();
 // Ensure the default route specifies "Tenant" as the default controller
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Tenant}/{action=Index}/{id?}");
+    pattern: "{controller=Tenant}/{action=LandingPage}/{id?}");
 
 app.Run();

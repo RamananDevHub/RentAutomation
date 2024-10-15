@@ -28,6 +28,13 @@ namespace RentAutomation.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult LandingPage()
+        {
+            return View();
+        }
+
+
         [HttpPost]
         public IActionResult Create(Tenant tenant)
         {
