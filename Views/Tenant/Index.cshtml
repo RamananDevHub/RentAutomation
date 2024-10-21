@@ -5,26 +5,26 @@
 }
 
 <!-- Header Section -->
-<header class="bg-light py-4 text-center shadow-sm">
-    <img src="~/images/logo.jpg" alt="RentAutomation Logo" style="height: 100px;" />
-    <h1 class="display-5 mt-3 font-weight-bold">Anna Street Tenants</h1>
-    <p class="text-muted">Effortlessly manage your rental properties</p>
+<header class="bg-dark text-white py-5 text-center shadow">
+    <img src="~/images/logo.jpg" alt="RentAutomation Logo" class="img-fluid mb-3" style="height: 100px;" />
+    <h1 class="display-4 font-weight-bold">Anna Street Tenants</h1>
+    <p class="lead">Effortlessly manage your rental properties</p>
 </header>
 
 <!-- Action Buttons -->
 <section class="container mt-5 mb-4 text-center">
     <div class="btn-group">
-        <a asp-action="Create" class="btn btn-primary btn-lg px-4 rounded-pill">+ Add New Tenant</a>
-        <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-success btn-lg px-4 rounded-pill">💰 View Revenue</a>
-        <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-info btn-lg px-4 rounded-pill">⚡ View Electricity Usage</a>
+        <a asp-action="Create" class="btn btn-gradient btn-lg px-5 rounded-pill">+ Add New Tenant</a>
+        <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-gradient btn-lg px-5 rounded-pill">💰 View Revenue</a>
+        <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-gradient btn-lg px-5 rounded-pill">⚡ View Electricity Usage</a>
     </div>
 </section>
 
 <!-- Tenant Table -->
 <section class="container">
     <div class="table-responsive">
-        <table class="table table-bordered table-hover shadow-sm">
-            <thead class="thead-dark">
+        <table class="table table-hover shadow-sm">
+            <thead class="thead-light">
                 <tr class="text-center">
                     <th scope="col">🏠 House No</th>
                     <th scope="col">👤 Name</th>
@@ -44,7 +44,7 @@
                         <td class="align-middle">
                             <!-- Action Buttons -->
                             <div class="btn-group btn-group-sm">
-                                <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-outline-secondary rounded-pill">Details</a>
+                                <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-outline-light rounded-pill">Details</a>
                                 <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-outline-warning rounded-pill">Edit</a>
                                 <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-outline-info rounded-pill">Rent</a>
                                 <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-outline-dark rounded-pill">History</a>
@@ -69,6 +69,6 @@
 </section>
 
 <!-- Footer -->
-<footer class="text-center mt-5 py-3 bg-light">
-    <p class="mb-0 text-muted">&copy; 2024 RentAutomation. All Rights Reserved.</p>
+<footer class="text-center mt-5 py-4 bg-dark text-white">
+    <p class="mb-0">&copy; 2024 RentAutomation. All Rights Reserved.</p>
 </footer>
