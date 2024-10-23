@@ -4,71 +4,109 @@
     ViewData["Title"] = "Tenant List";
 }
 
-<!-- Header Section -->
-<header class="bg-dark text-white py-5 text-center shadow">
-    <img src="~/images/logo.jpg" alt="RentAutomation Logo" class="img-fluid mb-3" style="height: 100px;" />
-    <h1 class="display-4 font-weight-bold">Anna Street Tenants</h1>
-    <p class="lead">Effortlessly manage your rental properties</p>
-</header>
+<!-- Main Container -->
+<div class="container-fluid p-0">
 
-<!-- Action Buttons -->
-<section class="container mt-5 mb-4 text-center">
-    <div class="btn-group">
-        <a asp-action="Create" class="btn btn-gradient btn-lg px-5 rounded-pill">+ Add New Tenant</a>
-        <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-gradient btn-lg px-5 rounded-pill">💰 View Revenue</a>
-        <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-gradient btn-lg px-5 rounded-pill">⚡ View Electricity Usage</a>
-    </div>
-</section>
 
-<!-- Tenant Table -->
-<section class="container">
-    <div class="table-responsive">
-        <table class="table table-hover shadow-sm">
-            <thead class="thead-light">
-                <tr class="text-center">
-                    <th scope="col">🏠 House No</th>
-                    <th scope="col">👤 Name</th>
-                    <th scope="col">📞 Mobile</th>
-                    <th scope="col">📅 Since</th>
-                    <th scope="col">⚙️ Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var tenant in Model)
-                {
+
+    <!-- Action Buttons -->
+    <section class="text-center py-4">
+        <div class="btn-group">
+            <a asp-action="Create" class="btn btn-primary btn-lg mx-3 shadow">+ Add New Tenant</a>
+            <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-success btn-lg mx-3 shadow">💰 View Revenue</a>
+            <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-info btn-lg mx-3 shadow">⚡ View Electricity Usage</a>
+           
+
+
+        </div>
+    </section>
+
+    <!-- Tenant Table Section -->
+    <section class="container mt-5 mb-5">
+        <div class="table-responsive">
+            <table class="table table-borderless shadow-lg rounded">
+                <thead class="thead-light">
                     <tr class="text-center">
-                        <td class="align-middle">@tenant.TenantHouseNo</td>
-                        <td class="align-middle">@tenant.TenantName</td>
-                        <td class="align-middle">@tenant.TenantPhone</td>
-                        <td class="align-middle">@tenant.TenancyStartDate.ToString("dd MMMM yyyy")</td>
-                        <td class="align-middle">
-                            <!-- Action Buttons -->
-                            <div class="btn-group btn-group-sm">
-                                <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-outline-light rounded-pill">Details</a>
-                                <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-outline-warning rounded-pill">Edit</a>
-                                <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-outline-info rounded-pill">Rent</a>
-                                <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-outline-dark rounded-pill">History</a>
-                                <a asp-action="ViewBills" asp-route-id="@tenant.Id" class="btn btn-outline-primary rounded-pill">Slip</a>
-                                <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-outline-secondary rounded-pill">Reset</a>
-                            </div>
-
-                            <!-- Delete Button -->
-                            <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" class="d-inline-block mt-2">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-danger btn-sm rounded-pill"
-                                        onclick="return confirm('Are you sure you want to delete this tenant?')">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
+                        <th scope="col">🏠 House No</th>
+                        <th scope="col">👤 Name</th>
+                        <th scope="col">📞 Mobile</th>
+                        <th scope="col">📅 Since</th>
+                        <th scope="col">⚙️ Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</section>
+                </thead>
+                <tbody>
+                    @foreach (var tenant in Model)
+                    {
+                        <tr class="text-center border-bottom">
+                            <td class="align-middle">@tenant.TenantHouseNo</td>
+                            <td class="align-middle">@tenant.TenantName</td>
+                            <td class="align-middle">@tenant.TenantPhone</td>
+                            <td class="align-middle">@tenant.TenancyStartDate.ToString("dd MMMM yyyy")</td>
+                            <td class="align-middle">
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Details" asp-route-id="@tenant.Id" class="btn btn-outline-secondary">Details</a>
+                                    <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-outline-warning">Edit</a>
+                                    <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-outline-info">Rent</a>
+                                    <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-outline-dark">History</a>
+                                    <a asp-action="ViewBills" asp-route-id="@tenant.Id" class="btn btn-outline-primary">Slip</a>
+                                    <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-outline-secondary">Reset</a>
+                                </div>
+                                <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" class="d-inline-block mt-2">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to delete this tenant?')">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-<!-- Footer -->
-<footer class="text-center mt-5 py-4 bg-dark text-white">
-    <p class="mb-0">&copy; 2024 RentAutomation. All Rights Reserved.</p>
-</footer>
+    <!-- Footer -->
+    <footer class="text-center py-4 bg-dark text-white">
+        <p class="mb-0">&copy; 2024 RentAutomation. All Rights Reserved.</p>
+    </footer>
+</div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+    }
+
+    .btn {
+        border-radius: 25px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+    .table {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .thead-light {
+        background-color: #f8f9fa;
+    }
+
+    .border-bottom {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .align-middle {
+        vertical-align: middle !important;
+    }
+</style>

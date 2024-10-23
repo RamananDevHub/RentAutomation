@@ -4,59 +4,128 @@
     ViewData["Title"] = "Edit Tenant";
 }
 
-<h1>Edit Tenant</h1>
+<!-- Main Container -->
+<div class="container-fluid p-0">
 
-<form asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
+    <!-- Header -->
+    <header class="text-center py-5 bg-light">
+        <h1 class="display-4 font-weight-bold">Edit Tenant</h1>
+    </header>
 
-    <div class="form-group">
-        <label asp-for="TenantName" class="control-label"></label>
-        <input asp-for="TenantName" class="form-control" />
-        <span asp-validation-for="TenantName" class="text-danger"></span>
-    </div>
+    <!-- Edit Tenant Form Section -->
+    <section class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Tenant Information</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <input type="hidden" asp-for="Id" />
 
-    <div class="form-group">
-        <label asp-for="TenantPhone" class="control-label"></label>
-        <input asp-for="TenantPhone" class="form-control" />
-        <span asp-validation-for="TenantPhone" class="text-danger"></span>
-    </div>
+                    <!-- Tenant Name -->
+                    <div class="form-group">
+                        <label asp-for="TenantName" class="control-label"></label>
+                        <input asp-for="TenantName" class="form-control" />
+                        <span asp-validation-for="TenantName" class="text-danger"></span>
+                    </div>
 
-    <div class="form-group">
-        <label asp-for="TenantHouseNo" class="control-label"></label>
-        <input asp-for="TenantHouseNo" class="form-control" readonly />
-        <span asp-validation-for="TenantHouseNo" class="text-danger"></span>
-    </div>
+                    <!-- Tenant Phone -->
+                    <div class="form-group">
+                        <label asp-for="TenantPhone" class="control-label"></label>
+                        <input asp-for="TenantPhone" class="form-control" />
+                        <span asp-validation-for="TenantPhone" class="text-danger"></span>
+                    </div>
 
-    <div class="form-group">
-        <label asp-for="TenancyStartDate" class="control-label"></label>
-        <input asp-for="TenancyStartDate" class="form-control" />
-        <span asp-validation-for="TenancyStartDate" class="text-danger"></span>
-    </div>
+                    <!-- Tenant House No (Read Only) -->
+                    <div class="form-group">
+                        <label asp-for="TenantHouseNo" class="control-label"></label>
+                        <input asp-for="TenantHouseNo" class="form-control" readonly />
+                        <span asp-validation-for="TenantHouseNo" class="text-danger"></span>
+                    </div>
 
-    <div class="form-group">
-        <label asp-for="Rent" class="control-label"></label>
-        <input asp-for="Rent" class="form-control" />
-        <span asp-validation-for="Rent" class="text-danger"></span>
-    </div>
+                    <!-- Tenancy Start Date -->
+                    <div class="form-group">
+                        <label asp-for="TenancyStartDate" class="control-label"></label>
+                        <input asp-for="TenancyStartDate" class="form-control" type="date" />
+                        <span asp-validation-for="TenancyStartDate" class="text-danger"></span>
+                    </div>
 
-    <div class="form-group">
-        <label asp-for="Deposit" class="control-label"></label>
-        <input asp-for="Deposit" class="form-control" />
-        <span asp-validation-for="Deposit" class="text-danger"></span>
-    </div>
+                    <!-- Rent -->
+                    <div class="form-group">
+                        <label asp-for="Rent" class="control-label"></label>
+                        <input asp-for="Rent" class="form-control" />
+                        <span asp-validation-for="Rent" class="text-danger"></span>
+                    </div>
 
-    <div class="form-group">
-        <label asp-for="EbPerUnit" class="control-label"></label>
-        <input asp-for="EbPerUnit" class="form-control" />
-        <span asp-validation-for="EbPerUnit" class="text-danger"></span>
-    </div>
+                    <!-- Deposit -->
+                    <div class="form-group">
+                        <label asp-for="Deposit" class="control-label"></label>
+                        <input asp-for="Deposit" class="form-control" />
+                        <span asp-validation-for="Deposit" class="text-danger"></span>
+                    </div>
 
-    <div class="form-group">
-        <label asp-for="Water" class="control-label"></label>
-        <input asp-for="Water" class="form-control" />
-        <span asp-validation-for="Water" class="text-danger"></span>
-    </div>
+                    <!-- EB Per Unit -->
+                    <div class="form-group">
+                        <label asp-for="EbPerUnit" class="control-label"></label>
+                        <input asp-for="EbPerUnit" class="form-control" />
+                        <span asp-validation-for="EbPerUnit" class="text-danger"></span>
+                    </div>
 
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Back to Details</a>
-</form>
+                    <!-- Water -->
+                    <div class="form-group">
+                        <label asp-for="Water" class="control-label"></label>
+                        <input asp-for="Water" class="form-control" />
+                        <span asp-validation-for="Water" class="text-danger"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg mx-2">Save Changes</button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary btn-lg mx-2">Back to Details</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 bg-dark text-white mt-5">
+        <p class="mb-0">&copy; 2024 RentAutomation. All Rights Reserved.</p>
+    </footer>
+</div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa;
+    }
+
+    .btn {
+        border-radius: 25px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+    .card {
+        border-radius: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 0.5rem;
+        transition: border-color 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+</style>

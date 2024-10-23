@@ -58,12 +58,18 @@
     table {
         border-collapse: collapse;
         width: 100%;
+        margin-top: 20px; /* Added spacing above the table */
     }
 
     th {
         background-color: #007bff; /* Bootstrap primary color */
         color: white;
         text-align: left;
+        padding: 10px; /* Padding for table headers */
+    }
+
+    tbody tr {
+        transition: background-color 0.3s; /* Smooth transition for hover effect */
     }
 
     tbody tr:nth-child(even) {
@@ -72,5 +78,10 @@
 
     tbody tr:hover {
         background-color: #e0e0e0; /* Light gray on hover */
+    }
+
+    td {
+        padding: 10px; /* Padding for table cells */
+        vertical-align: middle; /* Center vertically */
     }
 </style>

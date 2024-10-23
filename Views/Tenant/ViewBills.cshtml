@@ -5,7 +5,7 @@
         @for (int i = 1; i <= 10; i++)
         {
             <li class="mx-2">
-                <a class="btn btn-outline-primary" asp-action="ViewBills" asp-route-id="@i">@i</a>
+                <a class="btn btn-outline-primary rounded-circle" asp-action="ViewBills" asp-route-id="@i">@i</a>
             </li>
         }
     </ul>
@@ -121,7 +121,6 @@
                         <td><strong>@bill.TotalBill.ToString("0")</strong></td>
                     </tr>
                 }
-                }
             </tbody>
         </table>
     </div>
@@ -130,3 +129,40 @@ else
 {
     <p class="text-danger">No bills found for the selected period.</p>
 }
+
+<style>
+    .rounded-circle {
+        border-radius: 50%; /* Make buttons circular */
+        width: 50px; /* Width of the button */
+        height: 50px; /* Height of the button */
+        display: flex; /* Flexbox for centering content */
+        justify-content: center; /* Center text horizontally */
+        align-items: center; /* Center text vertically */
+        font-size: 18px; /* Font size for the number */
+        text-decoration: none; /* Remove underline from links */
+        color: #007bff; /* Link color */
+        border: 2px solid #007bff; /* Border color */
+        transition: background-color 0.2s, transform 0.2s; /* Transition effects */
+    }
+
+        .rounded-circle:hover {
+            background-color: #007bff; /* Change background color on hover */
+            color: white; /* Change text color on hover */
+            transform: translateY(-3px); /* Lift effect on hover */
+        }
+
+    /* Additional styles for body and form */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem; /* Spacing between form fields */
+    }
+
+    .alert {
+        border-radius: 0.5rem;
+    }
+</style>

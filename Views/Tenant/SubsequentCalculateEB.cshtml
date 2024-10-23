@@ -3,61 +3,124 @@
 @{
     ViewData["Title"] = "Subsequent EB Calculation";
 }
-<nav>
-    <ul style="list-style: none; padding: 0; margin: 0; display: flex;">
-        @for (int i = 1; i <= 10; i++)
+
+<!-- Main Content Section -->
+<div class="container mt-5">
+    <h1 class="text-center">Calculate Rent for @Model.TenantName</h1>
+
+    <!-- Navigation Section -->
+    <div class="text-center mt-4">
+        <nav>
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= 10; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link rounded-circle" asp-action="SubsequentCalculateEB" asp-route-id="@i">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+
+    <form asp-action="SubsequentCalculateEB" method="post" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Previous Month Unit -->
+        <div class="form-group">
+            <label for="previousMonthUnit">Previous Month Unit:</label>
+            <input type="text" id="previousMonthUnit" class="form-control" value="@Model.CurrentMonthUnit" readonly />
+        </div>
+
+        <!-- Current Month Unit -->
+        <div class="form-group">
+            <label for="currentMonthUnit">Current Month Unit:</label>
+            <input type="number" id="currentMonthUnit" name="currentMonthUnit" class="form-control" required />
+        </div>
+
+        @if (Model.TenantHouseNo == 9)
         {
-            <li style="margin-right: 10px;">
-                <a asp-action="SubsequentCalculateEB" asp-route-id="@i">@i</a>
-            </li>
+            <!-- Previous Motor Reading -->
+            <div class="form-group">
+                <label for="previousMotorReading">Previous Motor Reading:</label>
+                <input type="text" id="previousMotorReading" class="form-control" value="@Model.CurrentMotorReading" readonly />
+            </div>
+
+            <!-- Current Motor Reading -->
+            <div class="form-group">
+                <label for="currentMotorReading">Current Motor Reading:</label>
+                <input type="number" id="currentMotorReading" name="currentMotorReading" class="form-control" required />
+            </div>
         }
-    </ul>
-</nav>
 
-<h1>Subsequent EB Calculation for @Model.TenantName</h1>
+        @if (ViewBag.IsBillGenerated == null || !ViewBag.IsBillGenerated)
+        {
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Calculate EB</button>
+            </div>
+        }
+        else
+        {
+            <p class="text-danger text-center">Bill is already generated for this billing period.</p>
+        }
 
-
-<form asp-action="SubsequentCalculateEB" method="post">
-    <input type="hidden" asp-for="Id" />
-
-    <div class="form-group">
-        <label for="previousMonthUnit">Previous Month Unit:</label>
-        <input type="text" id="previousMonthUnit" class="form-control" value="@Model.CurrentMonthUnit" readonly /> <!-- Automatically populated -->
-    </div>
-
-    <div class="form-group">
-        <label for="currentMonthUnit">Current Month Unit:</label>
-        <input type="number" id="currentMonthUnit" name="currentMonthUnit" class="form-control" required /> <!-- User inputs this value -->
-    </div>
-
-    @if (Model.TenantHouseNo == 9)
-    {
-        <div class="form-group">
-            <label for="previousMotorReading">Previous Motor Reading:</label>
-            <input type="text" id="previousMotorReading" class="form-control" value="@Model.CurrentMotorReading" readonly /> <!-- Automatically populated -->
+        <div class="text-center mt-4">
+            <a asp-action="Index" asp-route-id="@Model.Id" class="btn btn-secondary">Back to List</a>
         </div>
+    </form>
 
-        <div class="form-group">
-            <label for="CurrentMotorReading">Current Motor Reading:</label>
-            <input type="number" id="CurrentMotorReading" name="currentMotorReading" class="form-control" required /> <!-- User inputs this value -->
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger mt-3" role="alert">
+            @ViewBag.ErrorMessage
         </div>
     }
+</div>
 
-    @if (ViewBag.IsBillGenerated == null || !ViewBag.IsBillGenerated)
-    {
-        <button type="submit" class="btn btn-primary">Calculate EB</button>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
     }
-    else
-    {
-        <p>Bill is already generated for this billing period.</p>
+
+    .pagination {
+        margin: 0;
+        padding: 0;
     }
 
-    <a asp-action="Index" asp-route-id="@Model.Id" class="btn btn-secondary">Back to List</a>
-</form>
+    .page-item {
+        margin: 0 10px;
+    }
 
-@if (ViewBag.ErrorMessage != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @ViewBag.ErrorMessage
-    </div>
-}
+    .page-link {
+        border-radius: 50%; /* Rounded container */
+        background-color: #007bff; /* Primary color */
+        color: white; /* Text color */
+        padding: 15px; /* Padding around the number */
+        text-align: center; /* Center the text */
+        transition: background-color 0.2s, transform 0.2s; /* Transition effects */
+        width: 50px; /* Width of the circle */
+        height: 50px; /* Height of the circle */
+        display: flex; /* Flexbox to center content */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        font-size: 18px; /* Font size for the number */
+    }
+
+        .page-link:hover {
+            
+            transform: translateY(-5px); /* Lift effect on hover */
+        }
+
+        .page-link:focus {
+            outline: none; /* Remove default focus outline */
+        }
+
+    .form-group {
+        margin-bottom: 1.5rem; /* Spacing between form fields */
+    }
+
+    .alert {
+        border-radius: 0.5rem;
+    }
+</style>

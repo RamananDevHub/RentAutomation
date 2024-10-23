@@ -8,7 +8,7 @@
 <style>
     /* General Styles */
     body {
-        font-family: 'Arial', sans-serif; /* Modern font */
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, sans-serif; /* Modern font */
         line-height: 1.6;
         margin: 0;
         padding: 0;
@@ -38,25 +38,42 @@
             left: 0;
             z-index: -1;
         }
+.hero-text h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 4rem;
+    color: white;
+    text-shadow: none;
+    margin: 0;
+    letter-spacing: 20px;
+    overflow: hidden; /* Hide excess text */
+    border-right: .15em solid white; /* Type cursor */
+    white-space: nowrap;
+    animation: typing 3.5s steps(30, end), blink 0.75s step-end infinite;
+}
 
-    .hero-text {
-        z-index: 1; /* Ensure the text is above the image */
-        text-align: center; /* Center the text */
+@@keyframes typing {
+    from {
+        width: 0;
     }
+    to {
+        width: 100%; /* End with full width */
+    }
+}
 
-        .hero-text h1 {
-            font-family: 'Dancing Script', cursive; /* Cursive font */
-            font-size: 4rem; /* Adjust font size as needed */
-            color: white; /* Text color */
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), /* White glow */
-            0 0 20px rgba(255, 255, 255, 0.6); /* More intense glow */
-            margin: 0; /* Remove default margin */
-        }
+@@keyframes blink {
+    from, to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: white;
+    }
+}
+
 
     /* Features Section Styles */
     #features {
         position: relative;
-        margin-top: -50px; /* Overlapping effect */
+        margin-top: 0; /* Overlapping effect */
         padding: 50px 0; /* More padding for a spacious feel */
         background-color: rgba(255, 255, 255, 0.95); /* White background with slight transparency */
         border-radius: 15px; /* Rounded corners for modern look */
@@ -143,7 +160,7 @@
     <section class="hero text-center">
         <img src="~/images/bg.jpg" alt="Hero Background">
         <div class="hero-text">
-            <h1>Since 2003</h1>
+            <h1>WELCOME</h1>
         </div>
     </section>
 

@@ -4,61 +4,114 @@
     ViewData["Title"] = "Tenant Details";
 }
 
-<h1>Tenant Details</h1>
+<!-- Main Container -->
+<div class="container-fluid p-0">
 
-<div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Property</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>ID</td>
-                <td>@Model.Id</td>
-            </tr>
-            <tr>
-                <td>Name</td>
-                <td>@Model.TenantName</td>
-            </tr>
-            <tr>
-                <td>Phone</td>
-                <td>@Model.TenantPhone</td>
-            </tr>
-            <tr>
-                <td>Staying Since</td>
-                <td>@Model.TenancyStartDate.ToString("dd MMMM yyyy")</td>
+    <!-- Header -->
+    <header class="text-center py-5 bg-light">
+        <h1 class="display-4 font-weight-bold">Tenant Details</h1>
+    </header>
 
-            </tr>
-            <tr>
-                <td>House No</td>
-                <td>@Model.TenantHouseNo</td>
-            </tr>
-            <tr>
-                <td>Rent</td>
-                <td>@Model.Rent</td>
-            </tr>
-            <tr>
-                <td>Deposit</td>
-                <td>@Model.Deposit</td>
-            </tr>
-            <tr>
-                <td>EB Per Unit</td>
-                <td>@Model.EbPerUnit</td>
-            </tr>
-            <tr>
-                <td>Water</td>
-                <td>@Model.Water</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- Tenant Details Section -->
+    <section class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Tenant Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr class="text-primary">
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ID</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td>@Model.TenantName</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td>@Model.TenantPhone</td>
+                        </tr>
+                        <tr>
+                            <td>Staying Since</td>
+                            <td>@Model.TenancyStartDate.ToString("dd MMMM yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td>House No</td>
+                            <td>@Model.TenantHouseNo</td>
+                        </tr>
+                        <tr>
+                            <td>Rent</td>
+                            <td>@Model.Rent</td>
+                        </tr>
+                        <tr>
+                            <td>Deposit</td>
+                            <td>@Model.Deposit</td>
+                        </tr>
+                        <tr>
+                            <td>EB Per Unit</td>
+                            <td>@Model.EbPerUnit</td>
+                        </tr>
+                        <tr>
+                            <td>Water</td>
+                            <td>@Model.Water</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">Edit</a>
-    <a asp-action="CalculateEB" asp-route-id="@Model.Id" class="btn btn-info btn-sm">Calculate Rent</a>
-    <a asp-action="ViewHistory" asp-route-id="@Model.Id" class="btn btn-dark btn-sm">Bill History</a>
-    <a asp-action="ViewBills" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">View Rent Slip</a>
-    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg mx-2">Edit</a>
+            <a asp-action="CalculateEB" asp-route-id="@Model.Id" class="btn btn-info btn-lg mx-2">Calculate Rent</a>
+            <a asp-action="ViewHistory" asp-route-id="@Model.Id" class="btn btn-dark btn-lg mx-2">Bill History</a>
+            <a asp-action="ViewBills" asp-route-id="@Model.Id" class="btn btn-primary btn-lg mx-2">View Rent Slip</a>
+            <a asp-action="Index" class="btn btn-secondary btn-lg mx-2">Back to List</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 bg-dark text-white mt-5">
+        <p class="mb-0">&copy; 2024 RentAutomation. All Rights Reserved.</p>
+    </footer>
 </div>
+
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa;
+    }
+
+    .btn {
+        border-radius: 25px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+    .table {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+        .table th {
+            color: #007bff;
+            font-weight: bold;
+        }
+</style>
