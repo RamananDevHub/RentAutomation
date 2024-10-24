@@ -15,11 +15,9 @@
             <a asp-action="Create" class="btn btn-primary btn-lg mx-3 shadow">+ Add New Tenant</a>
             <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-success btn-lg mx-3 shadow">💰 View Revenue</a>
             <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-info btn-lg mx-3 shadow">⚡ View Electricity Usage</a>
-           
-
-
+            <a href="@Url.Action("ViewBills", "Tenant")" class="btn btn-info btn-lg mx-3 shadow">📄 View Bills</a>
         </div>
-    </section>
+
 
     <!-- Tenant Table Section -->
     <section class="container mt-5 mb-5">
@@ -48,7 +46,7 @@
                                     <a asp-action="Edit" asp-route-id="@tenant.Id" class="btn btn-outline-warning">Edit</a>
                                     <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-outline-info">Rent</a>
                                     <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-outline-dark">History</a>
-                                    <a asp-action="ViewBills" asp-route-id="@tenant.Id" class="btn btn-outline-primary">Slip</a>
+                                   
                                     <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-outline-secondary">Reset</a>
                                 </div>
                                 <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" class="d-inline-block mt-2">
