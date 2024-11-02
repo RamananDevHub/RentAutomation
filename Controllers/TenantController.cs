@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PuppeteerSharp;
 using RentAutomation.Models;
 using System;
 using System.Globalization;
 using System.Linq;
+using PuppeteerSharp;
 
 namespace RentAutomation.Controllers
 {
@@ -334,6 +336,16 @@ namespace RentAutomation.Controllers
             return NotFound();
         }
 
+        public async Task GeneratePdf()
+        {
+            await new BrowserFetcher().DownloadAsync("883456"); // Replace with the desired revision number
+            var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+            var page = await browser.NewPageAsync();
+            await page.SetContentAsync("<h1>Hello, World!</h1><p>This is a PDF generated from HTML.</p>");
+            await page.PdfAsync("output.pdf");
+            await browser.CloseAsync();
+        }
+
 
         [HttpGet]
         public IActionResult ViewBills(int id, int month = 0, int year = 0)
@@ -544,6 +556,39 @@ namespace RentAutomation.Controllers
             return View(new List<TenantElectricityUsageViewModel>());
         }
 
+        // 13. Delete Last Generated Bill
+        [HttpGet]
+        public IActionResult DeleteLastBill(int id)
+        {
+            var lastBill = _context.BillTable
+                .Where(b => b.TenantId == id)
+                .OrderByDescending(b => b.BillingDate)
+                .FirstOrDefault();
+
+            if (lastBill == null)
+            {
+                return NotFound(); // Handle case where no bills exist
+            }
+
+            return View(lastBill); // Pass the last bill to the view for confirmation
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteLastBillConfirmed(int id)
+        {
+            var bill = _context.BillTable.Find(id);
+            if (bill != null)
+            {
+                _context.BillTable.Remove(bill);
+                _context.SaveChanges();
+
+                _logger.LogInformation("Deleted the last generated bill with ID {BillId}", id);
+                return RedirectToAction("Index"); // or redirect to another appropriate action
+            }
+
+            return NotFound(); // Handle case where bill is not found
+        }
 
 
 

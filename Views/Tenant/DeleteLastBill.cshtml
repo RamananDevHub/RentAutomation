@@ -1,0 +1,29 @@
+﻿@model Bill
+
+<h2>Delete Last Generated Bill</h2>
+
+<p>Are you sure you want to delete the following bill?</p>
+<table>
+    <tr>
+        <th>Billing Date</th>
+        <td>@Model.BillingDate.ToShortDateString()</td>
+    </tr>
+    <tr>
+        <th>Units Used</th>
+        <td>@Model.UnitsUsed</td>
+    </tr>
+    <tr>
+        <th>EB Bill</th>
+        <td>@Model.EbBill</td>
+    </tr>
+    <tr>
+        <th>Total Bill</th>
+        <td>@Model.TotalBill</td>
+    </tr>
+</table>
+
+<form asp-action="DeleteLastBillConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit">Delete Bill</button>
+    <a asp-action="Index">Cancel</a>
+</form>
