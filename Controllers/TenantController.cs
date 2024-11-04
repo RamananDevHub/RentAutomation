@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using PuppeteerSharp;
+
 using RentAutomation.Models;
 using System;
 using System.Globalization;
 using System.Linq;
-using PuppeteerSharp;
+
 
 namespace RentAutomation.Controllers
 {
@@ -334,16 +334,6 @@ namespace RentAutomation.Controllers
 
             }
             return NotFound();
-        }
-
-        public async Task GeneratePdf()
-        {
-            await new BrowserFetcher().DownloadAsync("883456"); // Replace with the desired revision number
-            var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-            var page = await browser.NewPageAsync();
-            await page.SetContentAsync("<h1>Hello, World!</h1><p>This is a PDF generated from HTML.</p>");
-            await page.PdfAsync("output.pdf");
-            await browser.CloseAsync();
         }
 
 
