@@ -102,7 +102,8 @@ namespace RentAutomation.Controllers
                     tenant.CurrentMotorReading= currentMotorReading;
                 }
                 else
-                {
+                { 
+                
                     // Update the previous month unit to the current value
                     tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
                     tenant.CurrentMonthUnit = currentMonthUnit;
@@ -223,8 +224,8 @@ namespace RentAutomation.Controllers
             if (tenant != null)
             {
                 // Check if the bill has already been generated for the current cycle
-                if (!tenant.IsBillGenerated)
-                {
+                //if (!tenant.IsBillGenerated)
+                //{
                     // If this is not the first calculation, assign the previous month's unit automatically
                     tenant.PreviousMonthUnit = tenant.CurrentMonthUnit; // Assign last month's current unit as this month's previous unit
                     tenant.CurrentMonthUnit = currentMonthUnit; // The user inputs the new current month unit
@@ -232,7 +233,7 @@ namespace RentAutomation.Controllers
                     // For tenants with motor reading (TenantHouseNo == 9)
                     tenant.PreviousMotorReading = tenant.CurrentMotorReading; // Last month's motor reading becomes this month's previous motor reading
                     tenant.CurrentMotorReading = currentMotorReading; // User inputs the new motor reading
-                }
+                //}
 
                 // Calculate units used based on house number
                 int unitsUsed;
@@ -284,13 +285,13 @@ namespace RentAutomation.Controllers
                 var billingPeriod = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-1);
 
                 // Check if a bill has already been generated for this billing period
-                var existingBill = _context.BillTable
-                    .FirstOrDefault(b => b.TenantId == id && b.BillingDate == billingPeriod);
+                //var existingBill = _context.BillTable
+                   // .FirstOrDefault(b => b.TenantId == id && b.BillingDate == billingPeriod);
 
-                if (existingBill != null)
-                {
-                    return View("Error"); // Or handle existing bill case more gracefully
-                }
+               // if (existingBill != null)
+                //{
+                 //   return View("Error"); // Or handle existing bill case more gracefully
+               // }
 
                 // Calculate units used (ensure to set CurrentMonthUnit and PreviousMonthUnit if needed)
                 var unitsUsed = tenant.UnitsUsed; // Ensure this property is calculated correctly based on the latest readings
