@@ -201,12 +201,7 @@ namespace RentAutomation.Controllers
                 // Get the current date
                 var currentDate = DateTime.Now;
 
-                // Check if a bill has already been generated for this billing period
-                var existingBill = _context.BillTable
-                    .FirstOrDefault(b => b.TenantId == id &&
-                                         b.BillingDate.Month == currentDate.Month &&
-                                         b.BillingDate.Year == currentDate.Year);
-
+               
 
                 // Only display existing data without modifying anything
                 ViewBag.PreviousMonthUnit = tenant.CurrentMonthUnit;
@@ -279,14 +274,7 @@ namespace RentAutomation.Controllers
                 // Calculate the billing period (previous month)
                 var billingPeriod = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-1);
 
-                // Check if a bill has already been generated for this billing period
-                //var existingBill = _context.BillTable
-                   // .FirstOrDefault(b => b.TenantId == id && b.BillingDate == billingPeriod);
-
-               // if (existingBill != null)
-                //{
-                 //   return View("Error"); // Or handle existing bill case more gracefully
-               // }
+             
 
                 // Calculate units used (ensure to set CurrentMonthUnit and PreviousMonthUnit if needed)
                 var unitsUsed = tenant.UnitsUsed; // Ensure this property is calculated correctly based on the latest readings
@@ -445,8 +433,7 @@ namespace RentAutomation.Controllers
                 // Save the changes to the database
                 _context.SaveChanges();
 
-                _logger.LogInformation("Reset EB readings for Tenant ID {TenantId}", tenant.Id);
-
+               
                 return RedirectToAction("index", new { id = tenant.Id });
             }
             return NotFound();
