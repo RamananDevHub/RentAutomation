@@ -105,12 +105,6 @@ namespace RentAutomation.Migrations
                     b.Property<decimal>("EbPerUnit")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool>("IsBillGenerated")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastEBCalculationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("PreviousMonthUnit")
                         .HasColumnType("int");
 
@@ -119,9 +113,6 @@ namespace RentAutomation.Migrations
 
                     b.Property<decimal>("Rent")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("RentBillGenerationDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("TenancyStartDate")
                         .HasColumnType("datetime2");

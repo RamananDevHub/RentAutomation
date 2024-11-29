@@ -20,10 +20,9 @@ namespace RentAutomation.Models
         public int PreviousMotorReading { get; set; }
 
         public DateTime BillingPeriod { get; set; }
-        public DateTime RentBillGenerationDate { get; set; }
-        public bool IsBillGenerated { get; set; }
+        
         public DateTime? BillGenerationDate { get; set; }
-        public DateTime LastEBCalculationDate { get; set; }
+        
 
         // Calculate the units used with negative check
         [NotMapped]
