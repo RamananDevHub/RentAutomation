@@ -105,6 +105,9 @@ namespace RentAutomation.Migrations
                     b.Property<decimal>("EbPerUnit")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsBillGenerated")
+                        .HasColumnType("bit");
+
                     b.Property<int>("PreviousMonthUnit")
                         .HasColumnType("int");
 

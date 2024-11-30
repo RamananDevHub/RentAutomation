@@ -22,7 +22,9 @@ namespace RentAutomation.Models
         public DateTime BillingPeriod { get; set; }
         
         public DateTime? BillGenerationDate { get; set; }
-        
+
+        public bool IsBillGenerated { get; set; } = false;  // Default is false
+
 
         // Calculate the units used with negative check
         [NotMapped]

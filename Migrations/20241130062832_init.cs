@@ -30,7 +30,8 @@ namespace RentAutomation.Migrations
                     CurrentMotorReading = table.Column<int>(type: "int", nullable: false),
                     PreviousMotorReading = table.Column<int>(type: "int", nullable: false),
                     BillingPeriod = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    BillGenerationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsBillGenerated = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
