@@ -354,6 +354,7 @@ namespace RentAutomation.Controllers
                 ViewBag.UnitsUsed = unitsUsed;
                 ViewBag.EbBill = ebBill;
                 ViewBag.TotalBill = totalBill;
+                ViewBag.BillingPeriod = billingPeriod; // Pass billing period to the view
 
                 return View(tenant); // Pass tenant to the view for display
 
