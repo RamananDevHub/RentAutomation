@@ -15,18 +15,20 @@
 
 <form id="ebCalculationForm" asp-action="CalculateEB" method="post">
     <input type="hidden" asp-for="Id" />
-
+   
+    <div class="form-group">
+        <label asp-for="PreviousMonthUnit"></label>
+        <input type="number" asp-for="PreviousMonthUnit" class="form-control" required />
+        <span asp-validation-for="PreviousMonthUnit" class="text-danger"></span>
+    </div>
+    
     <div class="form-group">
         <label asp-for="CurrentMonthUnit"></label>
         <input type="number" asp-for="CurrentMonthUnit" class="form-control" required />
         <span asp-validation-for="CurrentMonthUnit" class="text-danger"></span>
     </div>
 
-    <div class="form-group">
-        <label asp-for="PreviousMonthUnit"></label>
-        <input type="number" asp-for="PreviousMonthUnit" class="form-control" required />
-        <span asp-validation-for="PreviousMonthUnit" class="text-danger"></span>
-    </div>
+ 
 
     @if (Model.TenantHouseNo == 9)
     {

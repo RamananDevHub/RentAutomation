@@ -53,6 +53,18 @@ namespace RentAutomation.Controllers
             return View(tenant);
         }
 
+        public IActionResult BillAlreadyExists(int id)
+        {
+            var tenant = _context.TenantTable.Find(id);
+            if (tenant == null)
+            {
+                return NotFound();
+            }
+
+            // Pass the tenant model to the view
+            return View(tenant);
+        }
+
         // 2. Calculate EB for all tenants
         [HttpGet]
         public IActionResult CalculateEB(int id)
@@ -60,6 +72,18 @@ namespace RentAutomation.Controllers
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
+                // Calculate the billing period (previous month)
+                var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
+
+                // Check if a bill already exists for the calculated billing period
+                var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+
+                if (existingBill != null)
+                {
+                    // Redirect to a view that indicates a bill already exists
+                    return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                }
+
                 // Navigate based on current and previous month readings
                 if (tenant.CurrentMonthUnit == 0 && tenant.PreviousMonthUnit == 0)
                 {
@@ -92,8 +116,22 @@ namespace RentAutomation.Controllers
 
             if (tenant != null)
             {
-                // Handle first-time calculations
-                if (tenant.PreviousMonthUnit == 0 && tenant.CurrentMonthUnit == 0)
+                
+                    // Calculate the billing period (previous month)
+                    var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
+
+                    // Check if a bill already exists for the calculated billing period
+                    var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+
+                    if (existingBill != null)
+                    {
+                        // Redirect to a view that indicates a bill already exists
+                        return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                    }
+
+
+                    // Handle first-time calculations
+                    if (tenant.PreviousMonthUnit == 0 && tenant.CurrentMonthUnit == 0)
                 {
                     // First-time calculation
                     tenant.PreviousMonthUnit = previousMonthUnit;
@@ -307,6 +345,7 @@ namespace RentAutomation.Controllers
                 _context.BillTable.Add(bill);
               
                 tenant.BillGenerationDate = DateTime.Now; // Update bill generation date
+                
                 _context.SaveChanges();
 
                 // Store calculations in ViewBag for display in the view

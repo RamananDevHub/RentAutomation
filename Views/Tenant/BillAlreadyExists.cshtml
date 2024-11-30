@@ -1,0 +1,31 @@
+﻿@model RentAutomation.Models.Tenant
+
+
+
+@{
+    ViewBag.Title = "Bill Already Exists";
+}
+
+<h2>Bill Already Exists</h2>
+
+<div class="alert alert-warning">
+    <strong>Warning!</strong> A bill has already been generated for this tenant for the current month.
+</div>
+
+<h4>Tenant Details</h4>
+<ul>
+    <li><strong>Tenant Name:</strong> @Model.TenantName</li>
+    <li><strong>Tenant ID:</strong> @Model.Id</li>
+    <li><strong>House Number:</strong> @Model.TenantHouseNo</li>
+    <li><strong>Current Month Units:</strong> @Model.CurrentMonthUnit</li>
+    <li><strong>Previous Month Units:</strong> @Model.PreviousMonthUnit</li>
+    <li><strong>EB Bill:</strong> @Model.EbBill</li>
+</ul>
+
+<p>
+    You can view the existing bill details or return to the tenant list.
+</p>
+
+<a class="btn btn-primary" href="@Url.Action("Index", "Tenant")">Back to Tenant List</a>
+
+<a asp-action="DeleteLastBill" asp-route-id="@Model.Id" class="btn btn-danger">Delete Last Bill</a>
