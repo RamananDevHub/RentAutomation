@@ -6,6 +6,11 @@ using RentAutomation.Models;
 using System;
 using System.Globalization;
 using System.Linq;
+using QuestPDF.Fluent;
+using QuestPDF.Infrastructure;
+using QuestPDF.Drawing;
+using QuestPDF.Helpers;
+
 
 
 namespace RentAutomation.Controllers
@@ -361,29 +366,36 @@ namespace RentAutomation.Controllers
 
 
         [HttpGet]
-        public IActionResult ViewBills(int id, int month = 0, int year = 0)
+        public IActionResult ViewBills(int id = 1, int month = 0, int year = 0)
         {
-            // Use current month and year if not provided
-            var selectedMonth = month > 0 ? month : DateTime.Now.Month;
-            var selectedYear = year > 0 ? year : DateTime.Now.Year;
+            // Get the current date
+            var now = DateTime.Now;
+
+            // Use previous month and year if not provided
+            if (month <= 0 || year <= 0)
+            {
+                var previousMonthDate = now.AddMonths(-1);
+                month = previousMonthDate.Month;
+                year = previousMonthDate.Year;
+            }
 
             var bills = _context.BillTable
                 .Where(b => b.TenantId == id &&
-                            b.BillingDate.Month == selectedMonth &&
-                            b.BillingDate.Year == selectedYear)
+                            b.BillingDate.Month == month &&
+                            b.BillingDate.Year == year)
                 .ToList();
 
             var viewModel = new ViewBillsViewModel
             {
                 Id = id,
-
-                BillingPeriod = new DateTime(selectedYear, selectedMonth, 1),
+                BillingPeriod = new DateTime(year, month, 1),
                 Bills = bills
             };
 
             return View(viewModel);
         }
 
+       
 
         //6.View Historical Data
         // Controller Method
