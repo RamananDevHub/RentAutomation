@@ -6,10 +6,7 @@ using RentAutomation.Models;
 using System;
 using System.Globalization;
 using System.Linq;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-using QuestPDF.Drawing;
-using QuestPDF.Helpers;
+
 
 
 
