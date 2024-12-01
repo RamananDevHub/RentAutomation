@@ -28,4 +28,7 @@
 
 <a class="btn btn-primary" href="@Url.Action("Index", "Tenant")">Back to Tenant List</a>
 
-<a asp-action="DeleteLastBill" asp-route-id="@Model.Id" class="btn btn-danger">Delete Last Bill</a>
+<form asp-action="DeleteLastBillConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit">Delete</button>
+</form>
