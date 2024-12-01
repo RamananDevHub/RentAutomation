@@ -78,13 +78,13 @@ namespace RentAutomation.Controllers
                 var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
                 // Check if a bill already exists for the calculated billing period
-                //var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+                var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
 
-                //if (existingBill != null)
-               // {
-                    // Redirect to a view that indicates a bill already exists
-                   // return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
-                //}
+                if (existingBill != null)
+                {
+                     //Redirect to a view that indicates a bill already exists
+                    return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                }
 
                 // Navigate based on current and previous month readings
                 if (tenant.CurrentMonthUnit == 0 && tenant.PreviousMonthUnit == 0)
@@ -123,12 +123,12 @@ namespace RentAutomation.Controllers
                     var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
                     // Check if a bill already exists for the calculated billing period
-                   // var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+                    var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
 
-                   // if (existingBill != null)
-                   // {
-                     //   return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
-                   // }
+                    if (existingBill != null)
+                    {
+                        return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                    }
 
 
                     // Handle first-time calculations
@@ -531,51 +531,64 @@ namespace RentAutomation.Controllers
             return View(allRevenueData);
         }
 
-       
+
 
 
 
         [HttpGet]
         public IActionResult ElectricityUsage(string billingPeriod)
         {
-            if (!string.IsNullOrEmpty(billingPeriod))
+            if (string.IsNullOrEmpty(billingPeriod))
             {
-                // Parse the billingPeriod string (formatted as "yyyy-MM") into a DateTime object
-                DateTime selectedBillingPeriod;
-                if (DateTime.TryParseExact(billingPeriod, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out selectedBillingPeriod))
+                // Find the latest billing period from the TenantTable
+                var latestBillingRecord = _context.TenantTable
+                    .OrderByDescending(t => t.BillingPeriod)
+                    .FirstOrDefault();
+
+                if (latestBillingRecord != null)
                 {
-                    // Filter tenants by the selected billing period
-                    var tenants = _context.TenantTable
-                        .Where(t => t.BillingPeriod.Year == selectedBillingPeriod.Year &&
-                                    t.BillingPeriod.Month == selectedBillingPeriod.Month)
-                        .Select(t => new TenantElectricityUsageViewModel
-                        {
-                            TenantHouseNo = t.TenantHouseNo,
-                            TenantName = t.TenantName,
-                            UnitsUsed = t.UnitsUsed,
-                            BillingPeriod = t.BillingPeriod
-                        })
-                        .ToList();
-
-                    // Show the "no data" message only if the billing period is selected and no tenants were found
-                    if (!tenants.Any())
-                    {
-                        ViewBag.Message = "No data available for the selected billing period.";
-                    }
-
-                    return View(tenants);
+                    // Use the latest billing period as the default
+                    billingPeriod = latestBillingRecord.BillingPeriod.ToString("yyyy-MM");
                 }
                 else
                 {
-                    // If parsing fails, handle the error (optional)
-                    ViewBag.Message = "Invalid billing period format. Please select a valid period.";
+                    ViewBag.Message = "No billing data available.";
                     return View(new List<TenantElectricityUsageViewModel>());
                 }
             }
 
-            // If no billing period is selected, do not display any message or data
-            return View(new List<TenantElectricityUsageViewModel>());
+            // Parse the billingPeriod string (formatted as "yyyy-MM") into a DateTime object
+            if (DateTime.TryParseExact(billingPeriod, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime selectedBillingPeriod))
+            {
+                // Filter tenants by the selected billing period
+                var tenants = _context.TenantTable
+                    .Where(t => t.BillingPeriod.Year == selectedBillingPeriod.Year &&
+                                t.BillingPeriod.Month == selectedBillingPeriod.Month)
+                    .Select(t => new TenantElectricityUsageViewModel
+                    {
+                        TenantHouseNo = t.TenantHouseNo,
+                        TenantName = t.TenantName,
+                        UnitsUsed = t.UnitsUsed,
+                        BillingPeriod = t.BillingPeriod
+                    })
+                    .ToList();
+
+                if (!tenants.Any())
+                {
+                    ViewBag.Message = "No data available for the selected billing period.";
+                }
+
+                ViewBag.SelectedBillingPeriod = billingPeriod; // Pass the selected period to the view
+                return View(tenants);
+            }
+            else
+            {
+                // If parsing fails, handle the error
+                ViewBag.Message = "Invalid billing period format. Please select a valid period.";
+                return View(new List<TenantElectricityUsageViewModel>());
+            }
         }
+
 
         // 13. Delete Last Generated Bill
         [HttpGet]
@@ -629,6 +642,119 @@ namespace RentAutomation.Controllers
             }
 
             return NotFound(); // Handle case where bill is not found
+        }
+
+        [HttpGet]
+        public IActionResult ReviewEBProfits(string billingPeriod)
+        {
+            // If no billing period is provided, use the latest month with data
+            if (string.IsNullOrEmpty(billingPeriod))
+            {
+                var latestBill = _context.BillTable
+                    .OrderByDescending(b => b.BillingDate)
+                    .FirstOrDefault();
+
+                if (latestBill != null)
+                {
+                    billingPeriod = latestBill.BillingDate.ToString("yyyy-MM");
+                }
+                else
+                {
+                    ViewBag.Message = "No billing data available.";
+                    return View(new List<TenantEBProfitViewModel>());
+                }
+            }
+
+            // Parse the billing period
+            DateTime selectedBillingPeriod;
+            if (!DateTime.TryParseExact(billingPeriod, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out selectedBillingPeriod))
+            {
+                ViewBag.Message = "Invalid billing period format.";
+                return View(new List<TenantEBProfitViewModel>());
+            }
+
+            // Fetch tenants and their bills for the selected billing period
+            var bills = _context.BillTable
+                .Where(b => b.BillingDate.Year == selectedBillingPeriod.Year &&
+                            b.BillingDate.Month == selectedBillingPeriod.Month)
+                .OrderBy(t => t.TenantId)  // Ensure sorting by Tenant ID
+                .ToList();
+
+            if (!bills.Any())
+            {
+                ViewBag.Message = "No data available for the selected billing period.";
+                return View(new List<TenantEBProfitViewModel>());
+            }
+
+            // List to store profits for each tenant
+            var profits = new List<TenantEBProfitViewModel>();
+
+            foreach (var bill in bills)
+            {
+                // Calculate EB charges using the tariff
+                decimal ebCharge = CalculateEBCharge(bill.UnitsUsed);
+
+                // Calculate the profit
+                var profit = bill.EbBill - ebCharge;
+
+                profits.Add(new TenantEBProfitViewModel
+                {
+                    TenantId = bill.TenantId,
+                    TenantName = bill.TenantName,
+                    UnitsUsed = bill.UnitsUsed,
+                    EbBill = bill.EbBill,
+                    CalculatedEbCharge = ebCharge,
+                    Profit = profit,
+                    BillingDate = bill.BillingDate
+                });
+            }
+
+            ViewBag.SelectedBillingPeriod = billingPeriod; // Pass the selected period to the view
+            return View(profits);
+        }
+
+
+        // Helper function to calculate EB charge based on the tariff
+        private decimal CalculateEBCharge(int unitsUsed)
+        {
+            decimal charge = 0;
+
+            if (unitsUsed > 1000)
+            {
+                charge += (unitsUsed - 1000) * 11.55m;
+                unitsUsed = 1000;
+            }
+            if (unitsUsed > 800)
+            {
+                charge += (unitsUsed - 800) * 10.5m;
+                unitsUsed = 800;
+            }
+            if (unitsUsed > 600)
+            {
+                charge += (unitsUsed - 600) * 9.45m;
+                unitsUsed = 600;
+            }
+            if (unitsUsed > 500)
+            {
+                charge += (unitsUsed - 500) * 8.4m;
+                unitsUsed = 500;
+            }
+            if (unitsUsed > 400)
+            {
+                charge += (unitsUsed - 400) * 6.3m;
+                unitsUsed = 400;
+            }
+            if (unitsUsed > 200)
+            {
+                charge += (unitsUsed - 200) * 4.7m;
+                unitsUsed = 200;
+            }
+            if (unitsUsed > 100)
+            {
+                charge += (unitsUsed - 100) * 2.35m;
+            }
+
+            return charge;
         }
 
 

@@ -26,7 +26,8 @@
         <form method="get" action="/Tenant/ElectricityUsage" class="mb-3 row">
             <div class="col-md-6">
                 <label for="billingPeriod">Select Billing Period:</label>
-                <input type="month" id="billingPeriod" name="billingPeriod" required class="form-control">
+                <input type="month" id="billingPeriod" name="billingPeriod" required class="form-control"
+                       value="@ViewBag.SelectedBillingPeriod" />
             </div>
             <div class="col-md-2">
                 <button type="submit" class="btn btn-primary mt-4">Filter</button>
@@ -64,7 +65,10 @@
                 </tbody>
             </table>
         }
-      
+        else
+        {
+            <p>No data available for the selected billing period.</p>
+        }
 
         <!-- Chart Container -->
         <div style="width: 100%; margin-top: 30px;">
@@ -136,7 +140,6 @@
                                     }
                                 }
                             },
-                            // Add the data labels plugin configuration
                             datalabels: {
                                 anchor: 'end',
                                 align: 'start',
@@ -147,7 +150,6 @@
                                     size: '12'
                                 }
                             },
-                            // Custom plugin to draw electric symbols above each bar
                             afterDatasetsDraw: function (chart) {
                                 const ctx = chart.ctx;
                                 chart.data.datasets.forEach((dataset, i) => {

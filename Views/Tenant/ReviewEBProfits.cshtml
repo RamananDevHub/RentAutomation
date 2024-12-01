@@ -1,0 +1,70 @@
+﻿@model List<TenantEBProfitViewModel>
+@{
+    ViewBag.Title = "EB Profits Review";
+    var totalProfit = Model?.Sum(m => m.Profit) ?? 0; // Calculate total profit
+}
+
+<h2>EB Profits Review</h2>
+
+<form asp-action="ReviewEBProfits" method="get" class="mb-4">
+    <div class="form-group row">
+        <label for="billingPeriod" class="col-sm-2 col-form-label">Select Billing Period:</label>
+        <div class="col-sm-4">
+            <input type="month" id="billingPeriod" name="billingPeriod" class="form-control"
+                   value="@ViewBag.SelectedBillingPeriod" required />
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
+
+
+<!-- Display message if available -->
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <p class="alert alert-warning">@ViewBag.Message</p>
+}
+
+<!-- Display the table only if there is data -->
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tenant ID</th>
+                <th>Tenant Name</th>
+                <th>Units</th>
+                <th>Rental EB Charges</th>
+                <th>TNEB Charges</th>
+                <th>Profit (Rs.)</th>
+                <th>Month</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TenantId</td>
+                    <td>@item.TenantName</td>
+                    <td>@item.UnitsUsed</td>
+                    <td>@item.EbBill</td>
+                    <td>@item.CalculatedEbCharge</td>
+                    <td>@item.Profit</td>
+                    <td>@item.BillingDate.ToString("MM-yy")</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-right"><strong>Total Profit (Rs.):</strong></td>
+                <td><strong>@totalProfit</strong></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <p>No data available for the selected billing period.</p>
+}
