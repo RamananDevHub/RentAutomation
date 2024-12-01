@@ -78,13 +78,13 @@ namespace RentAutomation.Controllers
                 var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
                 // Check if a bill already exists for the calculated billing period
-                var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+                //var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
 
-                if (existingBill != null)
-                {
+                //if (existingBill != null)
+               // {
                     // Redirect to a view that indicates a bill already exists
-                    return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
-                }
+                   // return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                //}
 
                 // Navigate based on current and previous month readings
                 if (tenant.CurrentMonthUnit == 0 && tenant.PreviousMonthUnit == 0)
@@ -123,13 +123,12 @@ namespace RentAutomation.Controllers
                     var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
                     // Check if a bill already exists for the calculated billing period
-                    var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+                   // var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
 
-                    if (existingBill != null)
-                    {
-                        // Redirect to a view that indicates a bill already exists
-                        return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
-                    }
+                   // if (existingBill != null)
+                   // {
+                     //   return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                   // }
 
 
                     // Handle first-time calculations
@@ -584,7 +583,7 @@ namespace RentAutomation.Controllers
         {
             var lastBill = _context.BillTable
                 .Where(b => b.TenantId == id)
-                .OrderByDescending(b => b.BillingDate)
+                .OrderByDescending(b => b.BillGenerationDate)
                 .FirstOrDefault();
 
             if (lastBill == null)
@@ -599,20 +598,38 @@ namespace RentAutomation.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteLastBillConfirmed(int id)
         {
-            var bill = _context.BillTable.Find(id);
-            if (bill != null)
+            // Find the last bill for the tenant
+            var lastBill = _context.BillTable
+                .Where(b => b.TenantId == id)
+                .OrderByDescending(b => b.BillGenerationDate)
+                .FirstOrDefault();
+
+            if (lastBill != null)
             {
-                _context.BillTable.Remove(bill);
+                // Before deleting the bill, revert the tenant's units
+                var tenant = _context.TenantTable.Find(lastBill.TenantId);
+                if (tenant != null)
+                {
+                    // Restore previous month and current month units from the last bill
+                    //tenant.PreviousMonthUnit = lastBill.PreviousMonthUnit;
+                    tenant.CurrentMonthUnit = lastBill.PreviousMonthUnit;
+                    //tenant.PreviousMotorReading = lastBill.PreviousMotorReading;
+                    tenant.CurrentMotorReading = lastBill.PreviousMotorReading;
+
+                    // Save changes to the tenant table
+                    _context.SaveChanges();
+                }
+
+                // Now delete the bill
+                _context.BillTable.Remove(lastBill);
                 _context.SaveChanges();
 
-                _logger.LogInformation("Deleted the last generated bill with ID {BillId}", id);
+                _logger.LogInformation("Deleted the last generated bill with ID {BillId}", lastBill.Id);
                 return RedirectToAction("Index"); // or redirect to another appropriate action
             }
 
             return NotFound(); // Handle case where bill is not found
         }
-
-
 
 
         //10. View all tenants
