@@ -22,8 +22,7 @@
     </tr>
 </table>
 
-<form asp-action="DeleteLastBillConfirmed" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit">Delete Bill</button>
-    <a asp-action="Index">Cancel</a>
+<form asp-controller="Tenant" asp-action="DeleteLastBillConfirmed" method="post">
+    <input type="hidden" name="id" value="@Model.TenantId" />
+    <button type="submit">Delete</button>
 </form>
