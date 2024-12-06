@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -363,7 +367,7 @@ namespace RentAutomation.Controllers
 
 
         [HttpGet]
-        public IActionResult ViewBills(int id = 1, int month = 0, int year = 0)
+        public IActionResult ViewBills(int id = 1, int month = 0, int year = 0, bool download = false)
         {
             // Get the current date
             var now = DateTime.Now;
@@ -388,11 +392,62 @@ namespace RentAutomation.Controllers
                 BillingPeriod = new DateTime(year, month, 1),
                 Bills = bills
             };
+            if (download) // Check if the download query parameter is true
+            {
+                // Render the view to HTML
+                var htmlContent = RenderRazorViewToString("ViewBills", viewModel);
 
+                // Convert the HTML to PDF
+                var converter = new SelectPdf.HtmlToPdf();
+                var doc = converter.ConvertHtmlString(htmlContent);
+
+                // Get the month name from the DateTime object
+                string monthName = new DateTime(year, month, 1).ToString("MMMM");
+
+                // Set the file name with the month name (e.g., "House No_1_January_2024.pdf")
+                var fileName = $"House No_{id}_{monthName}_{year}.pdf";
+
+                // Save the PDF and return it as a file
+                var pdfBytes = doc.Save();
+                return File(pdfBytes, "application/pdf", fileName);
+            }
+
+            // Return the view if not downloading
             return View(viewModel);
         }
 
-       
+
+
+
+
+        private string RenderRazorViewToString(string viewName, object model)
+        {
+            var controllerContext = new ControllerContext
+            {
+                HttpContext = HttpContext
+            };
+
+            var viewEngine = HttpContext.RequestServices.GetService(typeof(IRazorViewEngine)) as IRazorViewEngine;
+            var tempDataProvider = HttpContext.RequestServices.GetService(typeof(ITempDataProvider)) as ITempDataProvider;
+
+            var actionContext = new ActionContext(HttpContext, RouteData, ControllerContext.ActionDescriptor, ModelState);
+            var viewResult = viewEngine.FindView(actionContext, viewName, false);
+
+            using (var sw = new StringWriter())
+            {
+                var viewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), controllerContext.ModelState)
+                {
+                    Model = model
+                };
+
+                var viewContext = new ViewContext(actionContext, viewResult.View, viewData, new TempDataDictionary(HttpContext, tempDataProvider), sw, new HtmlHelperOptions());
+                viewResult.View.RenderAsync(viewContext).Wait();
+                return sw.ToString();
+            }
+        }
+
+
+
 
         //6.View Historical Data
         // Controller Method
