@@ -1,34 +1,114 @@
 ﻿@model RentAutomation.Models.Tenant
 
-
-
 @{
     ViewBag.Title = "Bill Already Exists";
 }
 
-<h2>Bill Already Exists</h2>
+<style>
+    .container {
+        max-width: 800px;
+    }
 
-<div class="alert alert-warning">
-    <strong>Warning!</strong> A bill has already been generated for this tenant for the current month.
+    h2.text-danger {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffeeba;
+        color: #856404;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        font-size: 1rem;
+    }
+
+    .alert-dismissible .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: inherit;
+    }
+
+    .list-group-item {
+        background-color: #f8f9fa;
+        border: none;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+        .list-group-item strong {
+            color: #343a40;
+        }
+
+    .text-uppercase {
+        font-weight: bold;
+        letter-spacing: 0.05em;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        transition: background-color 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        transition: background-color 0.3s;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .justify-content-center {
+        justify-content: center;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-center text-danger mb-4">Bill Already Exists</h2>
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Warning!</strong> Rent bill has already been generated for this tenant.
+        <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <h4 class="mt-4 text-uppercase">Bill Details</h4>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Tenant Name:</strong> @Model.TenantName</li>
+        <li class="list-group-item"><strong>House Number:</strong> @Model.TenantHouseNo</li>
+        <li class="list-group-item"><strong>Current Month Units:</strong> @Model.CurrentMonthUnit</li>
+        <li class="list-group-item"><strong>Previous Month Units:</strong> @Model.PreviousMonthUnit</li>
+        <li class="list-group-item"><strong>Rent For:</strong> @Model.BillingPeriod.ToString("MMMM")</li> <!-- Format the date to display as 'Month Name' -->
+        <li class="list-group-item"><strong>Bill Generated On:</strong> @Model.BillGenerationDate</li>
+    </ul>
+
+    <p class="mt-4 text-center">
+        You can view the existing bill details or return to the tenant list.
+    </p>
+
+    <div class="d-flex justify-content-center mt-3">
+        <a class="btn btn-primary mr-2" href="@Url.Action("Index", "Tenant")">Back to Tenant List</a>
+
+        <form asp-action="DeleteLastBillConfirmed" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="btn btn-danger">Delete Bill</button>
+        </form>
+    </div>
 </div>
-
-<h4>Tenant Details</h4>
-<ul>
-    <li><strong>Tenant Name:</strong> @Model.TenantName</li>
-    <li><strong>Tenant ID:</strong> @Model.Id</li>
-    <li><strong>House Number:</strong> @Model.TenantHouseNo</li>
-    <li><strong>Current Month Units:</strong> @Model.CurrentMonthUnit</li>
-    <li><strong>Previous Month Units:</strong> @Model.PreviousMonthUnit</li>
-  
-</ul>
-
-<p>
-    You can view the existing bill details or return to the tenant list.
-</p>
-
-<a class="btn btn-primary" href="@Url.Action("Index", "Tenant")">Back to Tenant List</a>
-
-<form asp-action="DeleteLastBillConfirmed" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
-    <button type="submit">Delete</button>
-</form>

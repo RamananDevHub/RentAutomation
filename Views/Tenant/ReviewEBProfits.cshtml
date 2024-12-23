@@ -4,67 +4,149 @@
     var totalProfit = Model?.Sum(m => m.Profit) ?? 0; // Calculate total profit
 }
 
-<h2>EB Profits Review</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <style>
+        .container {
+            max-width: 800px;
+        }
 
-<form asp-action="ReviewEBProfits" method="get" class="mb-4">
-    <div class="form-group row">
-        <label for="billingPeriod" class="col-sm-2 col-form-label">Select Billing Period:</label>
-        <div class="col-sm-4">
-            <input type="month" id="billingPeriod" name="billingPeriod" class="form-control"
-                   value="@ViewBag.SelectedBillingPeriod" required />
-        </div>
-        <div class="col-sm-2">
-            <button type="submit" class="btn btn-primary">Filter</button>
-        </div>
-    </div>
-</form>
+        h2.text-danger {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
 
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            font-size: 1rem;
+        }
 
-<!-- Display message if available -->
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <p class="alert alert-warning">@ViewBag.Message</p>
-}
+        .alert-dismissible .close {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: inherit;
+        }
 
-<!-- Display the table only if there is data -->
-@if (Model != null && Model.Any())
-{
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Tenant ID</th>
-                <th>Tenant Name</th>
-                <th>Units</th>
-                <th>Rental EB Charges</th>
-                <th>TNEB Charges</th>
-                <th>Profit (Rs.)</th>
-                <th>Month</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.TenantId</td>
-                    <td>@item.TenantName</td>
-                    <td>@item.UnitsUsed</td>
-                    <td>@item.EbBill</td>
-                    <td>@item.CalculatedEbCharge</td>
-                    <td>@item.Profit</td>
-                    <td>@item.BillingDate.ToString("MM-yy")</td>
-                </tr>
+        .list-group-item {
+            background-color: #f8f9fa;
+            border: none;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+            .list-group-item strong {
+                color: #343a40;
             }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="5" class="text-right"><strong>Total Profit (Rs.):</strong></td>
-                <td><strong>@totalProfit</strong></td>
-                <td></td>
-            </tr>
-        </tfoot>
-    </table>
-}
-else
-{
-    <p>No data available for the selected billing period.</p>
-}
+
+        .text-uppercase {
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.3s;
+        }
+
+            .btn-danger:hover {
+                background-color: #c82333;
+            }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-content-center {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4">
+        <h2 class="text-center text-danger mb-4">EB Profits Review</h2>
+
+        <form asp-action="ReviewEBProfits" method="get" class="mb-4">
+            <div class="form-group row">
+                <label for="billingPeriod" class="col-sm-2 col-form-label">Select Billing Period:</label>
+                <div class="col-sm-4">
+                    <input type="month" id="billingPeriod" name="billingPeriod" class="form-control"
+                           value="@ViewBag.SelectedBillingPeriod" required />
+                </div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Display message if available -->
+        @if (!string.IsNullOrEmpty(ViewBag.Message))
+        {
+            <p class="alert alert-warning">@ViewBag.Message</p>
+        }
+
+        <!-- Display the table only if there is data -->
+        @if (Model != null && Model.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tenant ID</th>
+                        <th>Tenant Name</th>
+                        <th>Units</th>
+                        <th>Rental EB Charges</th>
+                        <th>TNEB Charges</th>
+                        <th>Profit (Rs.)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.TenantId</td>
+                            <td>@item.TenantName</td>
+                            <td>@item.UnitsUsed</td>
+                            <td>@item.EbBill</td>
+                            <td>@item.CalculatedEbCharge</td>
+                            <td>@item.Profit</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right"><strong>Total Profit (Rs.):</strong></td>
+                        <td><strong>@totalProfit</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        }
+        else
+        {
+            <p>No data available for the selected billing period.</p>
+        }
+    </div>
+
+</body>
+</html></html>
