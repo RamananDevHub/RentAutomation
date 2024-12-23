@@ -10,6 +10,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Tenant> TenantTable { get; set; }
     public DbSet<Bill> BillTable { get; set; }
 
+    public DbSet<UploadedFile> FilesTable { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -823,8 +823,102 @@ namespace RentAutomation.Controllers
             return View(tenants);
         }
 
-        //11. View tenant details
+        // GET: Upload and List Files
         [HttpGet]
+        public IActionResult UploadAndListFiles()
+        {
+            var files = _context.FilesTable.ToList(); // Fetch all uploaded files
+            return View(files);
+        }
+
+        // POST: Upload File
+        [HttpPost]
+        public async Task<IActionResult> UploadFile(IFormFile file)
+        {
+            if (file != null && file.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.CopyToAsync(memoryStream);
+                    var uploadedFile = new UploadedFile
+                    {
+                        FileName = file.FileName,
+                        FileContent = memoryStream.ToArray(),
+                        UploadDate = DateTime.Now
+                    };
+
+                    _context.FilesTable.Add(uploadedFile);
+                    await _context.SaveChangesAsync();
+                }
+                return RedirectToAction("UploadAndListFiles"); // Redirect to the same view after upload
+            }
+
+            ViewBag.ErrorMessage = "Please select a file to upload.";
+            return View();
+        }
+
+        // GET: View File
+        [HttpGet]
+        public IActionResult ViewFile(int id)
+        {
+            var file = _context.FilesTable.Find(id);
+            if (file != null)
+            {
+                return File(file.FileContent, "application/octet-stream", file.FileName); // Use appropriate content type
+            }
+            return NotFound();
+        }
+
+        // GET: Download File
+        [HttpGet]
+        public IActionResult DownloadFile(int id)
+        {
+            var file = _context.FilesTable.Find(id);
+            if (file != null)
+            {
+                return File(file.FileContent, "application/octet-stream", file.FileName); // Use appropriate content type
+            }
+            return NotFound();
+        }
+
+        // GET: Delete File
+        [HttpGet]
+        public IActionResult DeleteFile(int id)
+        {
+            var file = _context.FilesTable.Find(id);
+            if (file != null)
+            {
+                _context.FilesTable.Remove(file);
+                _context.SaveChanges();
+                return RedirectToAction("UploadAndListFiles"); // Redirect to the list view after deletion
+            }
+            return NotFound();
+        }
+
+
+            // Helper method to get content type based on file extension
+            private string GetContentType(string fileName)
+        {
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            switch (extension)
+            {
+                case ".pdf":
+                    return "application/pdf";
+                case ".jpg":
+                case ".jpeg":
+                    return "image/jpeg";
+                case ".png":
+                    return "image/png";
+                case ".gif":
+                    return "image/gif";
+                // Add more cases as needed
+                default:
+                    return "application/octet-stream"; // Default for unknown types
+            }
+        }
+
+            //11. View tenant details
+            [HttpGet]
         public IActionResult Details(int id)
         {
             var tenant = _context.TenantTable.Find(id);
