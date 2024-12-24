@@ -86,7 +86,7 @@ namespace RentAutomation.Controllers
 
                 if (existingBill != null)
                 {
-                     //Redirect to a view that indicates a bill already exists
+                    //Redirect to a view that indicates a bill already exists
                     return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
                 }
 
@@ -122,31 +122,31 @@ namespace RentAutomation.Controllers
 
             if (tenant != null)
             {
-                
-                    // Calculate the billing period (previous month)
-                    var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
-                    // Check if a bill already exists for the calculated billing period
-                    var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+                // Calculate the billing period (previous month)
+                var billingPeriod = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
 
-                    if (existingBill != null)
-                    {
-                        return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
-                    }
+                // Check if a bill already exists for the calculated billing period
+                var existingBill = _context.BillTable.FirstOrDefault(b => b.TenantId == tenant.Id && b.BillingDate == billingPeriod);
+
+                if (existingBill != null)
+                {
+                    return RedirectToAction("BillAlreadyExists", new { id = tenant.Id });
+                }
 
 
-                    // Handle first-time calculations
-                    if (tenant.PreviousMonthUnit == 0 && tenant.CurrentMonthUnit == 0)
+                // Handle first-time calculations
+                if (tenant.PreviousMonthUnit == 0 && tenant.CurrentMonthUnit == 0)
                 {
                     // First-time calculation
                     tenant.PreviousMonthUnit = previousMonthUnit;
                     tenant.CurrentMonthUnit = currentMonthUnit;
-                    tenant.PreviousMotorReading= previousMotorReading;
-                    tenant.CurrentMotorReading= currentMotorReading;
+                    tenant.PreviousMotorReading = previousMotorReading;
+                    tenant.CurrentMotorReading = currentMotorReading;
                 }
                 else
-                { 
-                
+                {
+
                     // Update the previous month unit to the current value
                     tenant.PreviousMonthUnit = tenant.CurrentMonthUnit;
                     tenant.CurrentMonthUnit = currentMonthUnit;
@@ -244,7 +244,7 @@ namespace RentAutomation.Controllers
                 // Get the current date
                 var currentDate = DateTime.Now;
 
-               
+
 
                 // Only display existing data without modifying anything
                 ViewBag.PreviousMonthUnit = tenant.CurrentMonthUnit;
@@ -259,15 +259,15 @@ namespace RentAutomation.Controllers
             var tenant = _context.TenantTable.Find(id);
             if (tenant != null)
             {
-                
-                    // If this is not the first calculation, assign the previous month's unit automatically
-                    tenant.PreviousMonthUnit = tenant.CurrentMonthUnit; // Assign last month's current unit as this month's previous unit
-                    tenant.CurrentMonthUnit = currentMonthUnit; // The user inputs the new current month unit
 
-                    // For tenants with motor reading (TenantHouseNo == 9)
-                    tenant.PreviousMotorReading = tenant.CurrentMotorReading; // Last month's motor reading becomes this month's previous motor reading
-                    tenant.CurrentMotorReading = currentMotorReading; // User inputs the new motor reading
-                
+                // If this is not the first calculation, assign the previous month's unit automatically
+                tenant.PreviousMonthUnit = tenant.CurrentMonthUnit; // Assign last month's current unit as this month's previous unit
+                tenant.CurrentMonthUnit = currentMonthUnit; // The user inputs the new current month unit
+
+                // For tenants with motor reading (TenantHouseNo == 9)
+                tenant.PreviousMotorReading = tenant.CurrentMotorReading; // Last month's motor reading becomes this month's previous motor reading
+                tenant.CurrentMotorReading = currentMotorReading; // User inputs the new motor reading
+
 
                 // Calculate units used based on house number
                 int unitsUsed;
@@ -292,7 +292,7 @@ namespace RentAutomation.Controllers
                 ViewBag.UnitsUsed = unitsUsed;
                 ViewBag.EbBill = ebBill;
 
-               
+
                 _context.SaveChanges();
 
                 // Redirect to GenerateBill view with the updated tenant ID
@@ -317,7 +317,7 @@ namespace RentAutomation.Controllers
                 // Calculate the billing period (previous month)
                 var billingPeriod = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(-1);
 
-             
+
 
                 // Calculate units used (ensure to set CurrentMonthUnit and PreviousMonthUnit if needed)
                 var unitsUsed = tenant.UnitsUsed; // Ensure this property is calculated correctly based on the latest readings
@@ -348,9 +348,9 @@ namespace RentAutomation.Controllers
                 };
 
                 _context.BillTable.Add(bill);
-              
+
                 tenant.BillGenerationDate = DateTime.Now; // Update bill generation date
-                
+
                 _context.SaveChanges();
 
                 // Store calculations in ViewBag for display in the view
@@ -475,7 +475,7 @@ namespace RentAutomation.Controllers
             return View("NoBillsFound"); // Create a NoBillsFound view to inform the user
         }
 
-        
+
 
 
 
@@ -536,7 +536,7 @@ namespace RentAutomation.Controllers
                 // Save the changes to the database
                 _context.SaveChanges();
 
-               
+
                 return RedirectToAction("index", new { id = tenant.Id });
             }
             return NotFound();
@@ -833,7 +833,7 @@ namespace RentAutomation.Controllers
 
         // POST: Upload File
         [HttpPost]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, string description)
         {
             if (file != null && file.Length > 0)
             {
@@ -844,7 +844,10 @@ namespace RentAutomation.Controllers
                     {
                         FileName = file.FileName,
                         FileContent = memoryStream.ToArray(),
-                        UploadDate = DateTime.Now
+                        MimeType = file.ContentType, // Ensure MimeType is set
+                        FileSize = file.Length,      // Set FileSize (optional, but good practice)
+                        UploadDate = DateTime.Now,
+                        Description= description
                     };
 
                     _context.FilesTable.Add(uploadedFile);
@@ -857,20 +860,65 @@ namespace RentAutomation.Controllers
             return View();
         }
 
-        // GET: View File
+        // Helper function to get the MIME type from the file extension
+        private string GetMimeType(string fileName)
+        {
+            var extension = Path.GetExtension(fileName).ToLowerInvariant();
+            return extension switch
+            {
+                ".txt" => "text/plain",
+                ".pdf" => "application/pdf",
+                ".doc" => "application/msword",
+                ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ".xls" => "application/vnd.ms-excel",
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".png" => "image/png",
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".gif" => "image/gif",
+                ".zip" => "application/zip",
+                ".rar" => "application/x-rar-compressed",
+                ".csv" => "text/csv",
+                _ => "application/octet-stream", // Default MIME type for unknown extensions
+            };
+        }
+
+        // GET: ViewFile
         [HttpGet]
         public IActionResult ViewFile(int id)
         {
+            // Fetch the file from the database using the id
             var file = _context.FilesTable.Find(id);
-            if (file != null)
-            {
-                return File(file.FileContent, "application/octet-stream", file.FileName); // Use appropriate content type
-            }
-            return NotFound();
-        }
 
-        // GET: Download File
-        [HttpGet]
+            if (file == null)
+            {
+                // If the file is not found in the database, return a "not found" response
+                return NotFound();
+            }
+
+            // Check if the file has a valid name
+            if (string.IsNullOrEmpty(file.FileName))
+            {
+                // If the file name is invalid, return a bad request
+                return BadRequest("File name is invalid.");
+            }
+
+            // Get the MIME type based on the file extension
+            string mimeType = GetMimeType(file.FileName);
+
+            // Set content disposition to inline to force the browser to display the file
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + file.FileName);
+
+            // Serve the file content with the appropriate MIME type
+            return File(file.FileContent, mimeType);
+        }
+    
+
+
+
+
+// GET: Download File
+[HttpGet]
         public IActionResult DownloadFile(int id)
         {
             var file = _context.FilesTable.Find(id);
