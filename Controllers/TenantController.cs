@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -389,7 +389,7 @@ namespace RentAutomation.Controllers
             var viewModel = new ViewBillsViewModel
             {
                 Id = id,
-                BillingPeriod = new DateTime(year, month, 1),
+                BillingDate = new DateTime(year, month, 1),
                 Bills = bills
             };
             if (download) // Check if the download query parameter is true
@@ -444,6 +444,54 @@ namespace RentAutomation.Controllers
                 viewResult.View.RenderAsync(viewContext).Wait();
                 return sw.ToString();
             }
+        }
+        [HttpGet]
+        public IActionResult SendBill(int id, int month, int year)
+        {
+            var tenant = _context.TenantTable.FirstOrDefault(t => t.Id == id);
+            var bill = _context.BillTable.FirstOrDefault(b => b.TenantId == id && b.BillingDate.Month == month && b.BillingDate.Year == year);
+
+            if (tenant != null && bill != null)
+            {
+
+                // Your UPI ID for payment
+                var upiId = "8838326419@ptsbi";  
+                // Use the TotalBill property for the amount to be paid
+                decimal totalAmount = bill.TotalBill; // The total amount from the Bill model
+
+                // Generate the UPI payment link
+                var upiLink = $"upi://pay?pa={upiId}&pn=Rent&am={totalAmount}&cu=INR&tn=Rent%20Payment%20for%20{tenant.TenantName}";
+
+                // Prepare the message to send via WhatsApp
+                var message = $"*Rent for {bill.BillingDate:MMMM yyyy}*\n\n" +
+                              $"Tenant Name: {tenant.TenantName}\n" +
+                              $"House No: {tenant.TenantHouseNo}\n" +
+                              $"Old Reading:{bill.PreviousMonthUnit}\n" +
+                              $"New Reading:{bill.CurrentMonthUnit}\n" +
+                              $"Units: {tenant.UnitsUsed}\n" +
+                              $"Per Unit: ₹{tenant.EbPerUnit}\n" +
+                              $"Rent: ₹{tenant.Rent}\n" +
+                              $"Water Charges: ₹{tenant.Water}\n" +
+                              $"EB bill: ₹{bill.EbBill}\n" +
+                              $"*Total Amount: ₹{bill.TotalBill}*\n\n" +
+                              $"Click the link below to pay via UPI:\n" +
+                      $"{upiLink}\n\n" +
+                              $"Thank you.";
+
+                // URL-encode the message
+                var encodedMessage = Uri.EscapeDataString(message);
+
+                // Ensure the tenant's phone number includes the country code (91 for India)
+                var phoneNumber = "91" + tenant.TenantPhone;
+
+                // Generate the WhatsApp URL
+                var whatsappUrl = $"https://api.whatsapp.com/send/?phone={phoneNumber}&text={encodedMessage}&type=phone_number&app_absent=0";
+
+                // Redirect to WhatsApp
+                return Redirect(whatsappUrl);
+            }
+
+            return NotFound();
         }
 
 

@@ -17,11 +17,11 @@
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label for="Month">Select Month:</label>
-            <input type="number" name="month" min="1" max="12" value="@Model.BillingPeriod.Month" required class="form-control" />
+            <input type="number" name="month" min="1" max="12" value="@Model.BillingDate.Month" required class="form-control" />
         </div>
         <div class="form-group">
             <label for="Year">Select Year:</label>
-            <input type="number" name="year" value="@Model.BillingPeriod.Year" required class="form-control" />
+            <input type="number" name="year" value="@Model.BillingDate.Year" required class="form-control" />
         </div>
 
         <button type="submit" class="btn btn-success">View Rent Slip</button>
@@ -32,7 +32,7 @@
 
 @if (Model.Bills != null && Model.Bills.Any())
 {
-    <h3 class="text-center text-success">Rent Slip for: @Model.BillingPeriod.ToString("MMMM yyyy")</h3>
+    <h3 class="text-center text-success">Rent Slip for: @Model.BillingDate.ToString("MMMM yyyy")</h3>
 
     <div class="table-responsive">
         <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
@@ -119,10 +119,14 @@
         </table>
     </div>
 }
+<a href="@Url.Action("SendBill", "Tenant", new { id = Model.Id, month = Model.BillingDate.Month, year = Model.BillingDate.Year })" target="_blank">
+    Send Bill via WhatsApp
+</a>
+
 
 @if (!Context.Request.Query.ContainsKey("download"))
 {
     <div class="text-center">
-        <a href="@Url.Action("ViewBills", "Tenant", new { id = Model.Id, month = Model.BillingPeriod.Month, year = Model.BillingPeriod.Year, download = true })" class="btn btn-secondary">Download PDF</a>
+        <a href="@Url.Action("ViewBills", "Tenant", new { id = Model.Id, month = Model.BillingDate.Month, year = Model.BillingDate.Year, download = true })" class="btn btn-secondary">Download PDF</a>
     </div>
 }
