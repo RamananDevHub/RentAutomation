@@ -460,23 +460,28 @@ namespace RentAutomation.Controllers
                 decimal totalAmount = bill.TotalBill; // The total amount from the Bill model
 
                 // Generate the UPI payment link
-                var upiLink = $"upi://pay?pa={upiId}&pn=Rent&am={totalAmount}&cu=INR&tn=Rent%20Payment%20for%20{tenant.TenantName}";
-
+                var upiLink = $"upi://pay?pa={upiId}&pn=YourBusinessName&am={totalAmount}&cu=INR&tn=Rent%20Payment%20for%20{tenant.TenantName}";
                 // Prepare the message to send via WhatsApp
-                var message = $"*Rent for {bill.BillingDate:MMMM yyyy}*\n\n" +
-                              $"Tenant Name: {tenant.TenantName}\n" +
-                              $"House No: {tenant.TenantHouseNo}\n" +
-                              $"Old Reading:{bill.PreviousMonthUnit}\n" +
-                              $"New Reading:{bill.CurrentMonthUnit}\n" +
-                              $"Units: {tenant.UnitsUsed}\n" +
-                              $"Per Unit: ₹{tenant.EbPerUnit}\n" +
-                              $"Rent: ₹{tenant.Rent}\n" +
-                              $"Water Charges: ₹{tenant.Water}\n" +
-                              $"EB bill: ₹{bill.EbBill}\n" +
-                              $"*Total Amount: ₹{bill.TotalBill}*\n\n" +
-                              $"Click the link below to pay via UPI:\n" +
-                      $"{upiLink}\n\n" +
-                              $"Thank you.";
+                var message = $"🌟 *Rent Details for {bill.BillingDate:MMMM yyyy}* 🌟\n\n" +
+                              $"Dear {tenant.TenantName},\n\n" +
+                              $"📍 *House Number:* {tenant.TenantHouseNo}\n\n" +
+                              $"🔹 *Billing Summary* 🔹\n" +
+                              $"  - *Old Reading:* {bill.PreviousMonthUnit} kWh\n" +
+                              $"  - *New Reading:* {bill.CurrentMonthUnit} kWh\n" +
+                              $"  - *Units Consumed:* {tenant.UnitsUsed} kWh\n" +
+                              $"  - *Rate per Unit:* ₹{tenant.EbPerUnit}\n" +
+                              $"  - *Rent:* ₹{tenant.Rent}\n" +
+                              $"  - *Water Charges:* ₹{tenant.Water}\n" +
+                              $"  - *Electricity Bill:* ₹{bill.EbBill}\n\n" +
+                              $"💰 *Total Amount Due:* ₹{bill.TotalBill}\n\n" +
+                              $"For your convenience, please use the link below to make your payment via UPI:\n" +
+                              $"{upiLink}\n\n" +
+                              $"We appreciate your prompt attention to this matter.\n\n" +
+                              $"Should you have any questions or require assistance, feel free to reach out.\n\n" +
+                              $"Thank you for being a valued tenant.\n\n" +
+                              $"Warm regards,\n" +
+                              $"[Your Company Name]";
+
 
                 // URL-encode the message
                 var encodedMessage = Uri.EscapeDataString(message);
