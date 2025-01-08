@@ -326,7 +326,7 @@ namespace RentAutomation.Controllers
                 var ebBill = unitsUsed * tenant.EbPerUnit;
 
                 // Calculate Total Bill
-                var totalBill = tenant.Rent + tenant.Water + ebBill;
+                var totalBill = tenant.Rent + tenant.Water + tenant.EbBill;
 
                 // Create a new bill
                 var bill = new Bill
@@ -463,7 +463,7 @@ namespace RentAutomation.Controllers
                 var upiLink = $"upi://pay?pa={upiId}&pn=YourBusinessName&am={totalAmount}&cu=INR&tn=Rent%20Payment%20for%20{tenant.TenantName}";
                 // Prepare the message to send via WhatsApp
                 var message = $"🌟 *Rent Details for {bill.BillingDate:MMMM yyyy}* 🌟\n\n" +
-                              $"Dear {tenant.TenantName},\n\n" +
+                              $" {tenant.TenantName},\n\n" +
                               $"📍 *House Number:* {tenant.TenantHouseNo}\n\n" +
                               $"🔹 *Billing Summary* 🔹\n" +
                               $"  - *Old Reading:* {bill.PreviousMonthUnit} kWh\n" +
@@ -473,14 +473,8 @@ namespace RentAutomation.Controllers
                               $"  - *Rent:* ₹{tenant.Rent}\n" +
                               $"  - *Water Charges:* ₹{tenant.Water}\n" +
                               $"  - *Electricity Bill:* ₹{bill.EbBill}\n\n" +
-                              $"💰 *Total Amount Due:* ₹{bill.TotalBill}\n\n" +
-                              $"For your convenience, please use the link below to make your payment via UPI:\n" +
-                              $"{upiLink}\n\n" +
-                              $"We appreciate your prompt attention to this matter.\n\n" +
-                              $"Should you have any questions or require assistance, feel free to reach out.\n\n" +
-                              $"Thank you for being a valued tenant.\n\n" +
-                              $"Warm regards,\n" +
-                              $"[Your Company Name]";
+                              $"💰 *Total Amount Due:* ₹{bill.TotalBill}\n\n";
+                              
 
 
                 // URL-encode the message
@@ -489,8 +483,10 @@ namespace RentAutomation.Controllers
                 // Ensure the tenant's phone number includes the country code (91 for India)
                 var phoneNumber = "91" + tenant.TenantPhone;
 
-                // Generate the WhatsApp URL
-                var whatsappUrl = $"https://api.whatsapp.com/send/?phone={phoneNumber}&text={encodedMessage}&type=phone_number&app_absent=0";
+          
+                // Generate the WhatsApp URL with the bypass for the "Continue Chat" button
+                var whatsappUrl = $"https://wa.me/{phoneNumber}?text={encodedMessage}";
+
 
                 // Redirect to WhatsApp
                 return Redirect(whatsappUrl);
