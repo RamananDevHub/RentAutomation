@@ -1,6 +1,15 @@
-﻿@model IEnumerable<MonthlyRevenueViewModel>
+﻿@using System.Text.RegularExpressions
+@model IEnumerable<MonthlyRevenueViewModel>
+
 
 <h2>View Revenue Data</h2>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div></div> <!-- Spacer for alignment -->
+    <div>
+        <strong>Total Revenue: ₹ @FormatAsIndianCurrency(Model.Sum(revenue => revenue.TotalRevenue))</strong>
+    </div>
+</div>
 
 @if (!Model.Any())
 {
@@ -13,7 +22,7 @@ else
             <tr>
                 <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Year</th>
                 <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Month</th>
-                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Total Revenue (₹)</th>
+                <th style="padding: 12px; text-align: left; border-bottom: 1px solid #ddd;">Revenue (₹)</th>
             </tr>
         </thead>
         <tbody>
@@ -38,20 +47,25 @@ else
     // Method to format currency as per Indian numbering system
     private string FormatAsIndianCurrency(decimal amount)
     {
-        // Convert the amount to a long
-        long value = Convert.ToInt64(amount);
+        // Convert the amount to string and then split it into the integer and decimal parts
+        string amountString = Math.Round(amount, 2).ToString("F2");
+        string[] parts = amountString.Split('.');
+        string integerPart = parts[0];
+        string decimalPart = parts[1];
 
-        // Format the value with space as thousands separator
-        string result = value.ToString("#,0").Replace(",", " "); // Replace comma with space
-
-        // To handle the placement of commas for lakhs and crores
-        if (value >= 100000)
+        // Format the integer part in the Indian numbering system
+        if (integerPart.Length > 3)
         {
-            // Insert comma before the last 3 digits for Indian numbering
-            int length = result.Length;
-            result = result.Insert(length - 3, ",");
+            int lastThreeDigitsIndex = integerPart.Length - 3;
+            string lastThreeDigits = integerPart.Substring(lastThreeDigitsIndex);
+            string restOfTheNumber = integerPart.Substring(0, lastThreeDigitsIndex);
+
+            // Add commas in the rest of the number in the Indian format
+            restOfTheNumber = Regex.Replace(restOfTheNumber, "(?<=\\d)(?=(\\d{2})+$)", ",");
+
+            integerPart = restOfTheNumber + "," + lastThreeDigits;
         }
 
-        return result;
+        return integerPart + "." + decimalPart;
     }
 }

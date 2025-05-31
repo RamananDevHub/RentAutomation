@@ -192,6 +192,7 @@ namespace RentAutomation.Controllers
             if (tenant != null)
             {
                 if (PreviousMonthUnit > CurrentMonthUnit)
+
                 {
                     ModelState.AddModelError(string.Empty, "Previous month reading must be less than or equal to the current month reading.");
                     return View("FirstTimeCalculateEB", tenant); // Re-render the view with an error message
@@ -462,19 +463,20 @@ namespace RentAutomation.Controllers
                 // Generate the UPI payment link
                 var upiLink = $"upi://pay?pa={upiId}&pn=YourBusinessName&am={totalAmount}&cu=INR&tn=Rent%20Payment%20for%20{tenant.TenantName}";
                 // Prepare the message to send via WhatsApp
-                var message = $"🌟 *Rent Details for {bill.BillingDate:MMMM yyyy}* 🌟\n\n" +
+                var message = $" *Rent for {bill.BillingDate:MMMM yyyy}* \n\n" +
                               $" {tenant.TenantName},\n\n" +
-                              $"📍 *House Number:* {tenant.TenantHouseNo}\n\n" +
-                              $"🔹 *Billing Summary* 🔹\n" +
+                              $" *House Number:* {tenant.TenantHouseNo}\n\n" +
+                              $"🔹 *Summary* 🔹\n" +
                               $"  - *Old Reading:* {bill.PreviousMonthUnit} kWh\n" +
                               $"  - *New Reading:* {bill.CurrentMonthUnit} kWh\n" +
                               $"  - *Units Consumed:* {tenant.UnitsUsed} kWh\n" +
                               $"  - *Rate per Unit:* ₹{tenant.EbPerUnit}\n" +
                               $"  - *Rent:* ₹{tenant.Rent}\n" +
                               $"  - *Water Charges:* ₹{tenant.Water}\n" +
-                              $"  - *Electricity Bill:* ₹{bill.EbBill}\n\n" +
-                              $"💰 *Total Amount Due:* ₹{bill.TotalBill}\n\n";
-                              
+                              $"  - *EB:* ₹{bill.EbBill}\n\n" +
+                              $" *Total Rent Amount:* ₹{bill.TotalBill}\n\n" +
+                              $" *Cash Only*";
+
 
 
                 // URL-encode the message
