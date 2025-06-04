@@ -1,0 +1,36 @@
+﻿@using System.Linq
+@using System.Globalization
+@model IEnumerable<RentAutomation.Models.TenantEBPredictionViewModel>
+
+<h2>🔮 EB Bill Predictions (Next Month)</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No tenants have enough data for EB prediction.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>🏠 Tenant</th>
+                <th>📅 Last Billing</th>
+                <th>💡 Last EB Bill</th>
+                <th>🔮 Predicted EB Bill</th>
+                <th>➡️ For Billing Period</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TenantName (ID: @item.TenantId)</td>
+                    <td>@item.LastBillingDate.ToString("yyyy-MM")</td>
+                    <td>@item.LastKnownEbBill.ToString("C0", new CultureInfo("en-IN"))</td>
+                    <td><strong>@item.PredictedEbBill.ToString("C0", new CultureInfo("en-IN"))</strong></td>
+                    <td>@item.NextBillingPeriod.ToString("yyyy-MM")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

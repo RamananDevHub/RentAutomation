@@ -646,54 +646,99 @@ namespace RentAutomation.Controllers
         {
             if (string.IsNullOrEmpty(billingPeriod))
             {
-                // Find the latest billing period from the TenantTable
-                var latestBillingRecord = _context.TenantTable
-                    .OrderByDescending(t => t.BillingPeriod)
+                // Use latest billing period from BillTable
+                var latestBill = _context.BillTable
+                    .OrderByDescending(b => b.BillingDate)
                     .FirstOrDefault();
 
-                if (latestBillingRecord != null)
+                if (latestBill != null)
                 {
-                    // Use the latest billing period as the default
-                    billingPeriod = latestBillingRecord.BillingPeriod.ToString("yyyy-MM");
+                    billingPeriod = latestBill.BillingDate.ToString("yyyy-MM");
                 }
                 else
                 {
-                    ViewBag.Message = "No billing data available.";
+                    ViewBag.Message = "No billing history found.";
                     return View(new List<TenantElectricityUsageViewModel>());
                 }
             }
 
-            // Parse the billingPeriod string (formatted as "yyyy-MM") into a DateTime object
+            // Parse the billingPeriod (e.g., "2025-05")
             if (DateTime.TryParseExact(billingPeriod, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime selectedBillingPeriod))
             {
-                // Filter tenants by the selected billing period
-                var tenants = _context.TenantTable
-                    .Where(t => t.BillingPeriod.Year == selectedBillingPeriod.Year &&
-                                t.BillingPeriod.Month == selectedBillingPeriod.Month)
-                    .Select(t => new TenantElectricityUsageViewModel
+                // Pull tenant data for that month from BillTable
+                var usageData = _context.BillTable
+                    .Where(b => b.BillingDate.Year == selectedBillingPeriod.Year &&
+                                b.BillingDate.Month == selectedBillingPeriod.Month)
+                    .Select(b => new TenantElectricityUsageViewModel
                     {
-                        TenantHouseNo = t.TenantHouseNo,
-                        TenantName = t.TenantName,
-                        UnitsUsed = t.UnitsUsed,
-                        BillingPeriod = t.BillingPeriod
+                        TenantHouseNo = b.TenantId,
+                        TenantName = b.TenantName,
+                        UnitsUsed = b.UnitsUsed,
+                        BillingPeriod = b.BillingDate
                     })
                     .ToList();
 
-                if (!tenants.Any())
+                if (!usageData.Any())
                 {
-                    ViewBag.Message = "No data available for the selected billing period.";
+                    ViewBag.Message = "No data found for the selected billing period.";
                 }
 
-                ViewBag.SelectedBillingPeriod = billingPeriod; // Pass the selected period to the view
-                return View(tenants);
+                ViewBag.SelectedBillingPeriod = billingPeriod;
+                return View(usageData);
             }
             else
             {
-                // If parsing fails, handle the error
-                ViewBag.Message = "Invalid billing period format. Please select a valid period.";
+                ViewBag.Message = "Invalid billing period format.";
                 return View(new List<TenantElectricityUsageViewModel>());
             }
         }
+        [HttpGet]
+        public IActionResult PredictEbBill()
+        {
+            // Fetch tenants who have bills
+            var tenants = _context.BillTable
+                .Select(b => b.TenantId)
+                .Distinct()
+                .ToList();
+
+            var predictions = new List<TenantEBPredictionViewModel>();
+
+            foreach (var tenantId in tenants)
+            {
+                var tenantBills = _context.BillTable
+                    .Where(b => b.TenantId == tenantId)
+                    .OrderBy(b => b.BillingDate)
+                    .ToList();
+
+                // Skip if not enough data
+                if (tenantBills.Count < 2)
+                    continue;
+
+                // Use bill index as x-axis (e.g. month sequence)
+                var x = Enumerable.Range(1, tenantBills.Count).ToList();
+                var y = tenantBills
+                    .Select(b => (double)(b.UnitsUsed * b.EbPerUnit)) // EB bill
+                    .ToList();
+
+                var (slope, intercept) = RentPredictor.Train(x, y);
+                double prediction = RentPredictor.Predict(x.Count + 1, slope, intercept);
+
+                var latestBill = tenantBills.Last();
+
+                predictions.Add(new TenantEBPredictionViewModel
+                {
+                    TenantId = tenantId,
+                    TenantName = latestBill.TenantName,
+                    LastKnownEbBill = latestBill.EbBill,
+                    PredictedEbBill = (decimal)Math.Round(prediction, 2),
+                    LastBillingDate = latestBill.BillingDate,
+                    NextBillingPeriod = latestBill.BillingDate.AddMonths(1)
+                });
+            }
+
+            return View(predictions);
+        }
+
 
 
         // 13. Delete Last Generated Bill
