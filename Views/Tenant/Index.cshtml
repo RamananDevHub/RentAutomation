@@ -7,26 +7,22 @@
 <!-- Main Container -->
 <div class="container-fluid p-0">
 
-
-
     <!-- Action Buttons -->
-    <section class="text-center py-4">
+    <section class="text-center py-2">
+        <!-- Reduced padding here from py-4 to py-2 -->
         <div class="btn-group">
-            <a asp-action="Create" class="btn btn-primary btn-lg mx-3 shadow">+ Add New Tenant</a>
-            <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-success btn-lg mx-3 shadow">💰 View Revenue</a>
-            <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-info btn-lg mx-3 shadow">⚡ View Electricity Usage</a>
-            <a href="@Url.Action("ViewBills", "Tenant")" class="btn btn-info btn-lg mx-3 shadow">📄 View Bills</a>
-            <a href="@Url.Action("ReviewEBProfits", "Tenant")" class="btn btn-info btn-lg mx-3 shadow">📄View EB Profits</a>
-            <a href="@Url.Action("PredictEbBill", "Tenant")" class="btn btn-warning btn-lg mx-3 shadow">🔮 Predict EB Bill</a>
-
-        
-
-
+            <a asp-action="Create" class="btn btn-primary btn-sm mx-2 shadow">+ Add New Tenant</a>
+            <a href="@Url.Action("Revenue", "Tenant")" class="btn btn-success btn-sm mx-2 shadow">💰 View Revenue</a>
+            <a href="@Url.Action("ElectricityUsage", "Tenant")" class="btn btn-info btn-sm mx-2 shadow">⚡ View Electricity Usage</a>
+            <a href="@Url.Action("ViewBills", "Tenant")" class="btn btn-info btn-sm mx-2 shadow">📄 View Bills</a>
+            <a href="@Url.Action("ReviewEBProfits", "Tenant")" class="btn btn-info btn-sm mx-2 shadow">📄 View EB Profits</a>
+            <a href="@Url.Action("PredictEbBill", "Tenant")" class="btn btn-warning btn-sm mx-2 shadow">🔮 Predict EB Bill</a>
         </div>
-
+    </section>
 
     <!-- Tenant Table Section -->
-    <section class="container mt-5 mb-5">
+    <section class="container mt-3 mb-5">
+        <!-- Reduced top margin here from mt-5 to mt-3 -->
         <div class="table-responsive">
             <table class="table table-borderless shadow-lg rounded">
                 <thead class="thead-light">
@@ -53,9 +49,7 @@
                                     <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-outline-info">Rent</a>
                                     <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-outline-dark">History</a>
                                     <a asp-action="DeleteLastBill" asp-route-id="@tenant.Id" class="btn btn-danger">Delete Last Bill</a>
-                                        <a asp-action="UploadAndListFiles" asp-route-id="@tenant.Id" class="btn btn-info">Documents</a>
-                                     
-                                   
+                                    <a asp-action="UploadAndListFiles" asp-route-id="@tenant.Id" class="btn btn-info">Documents</a>
                                     <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-outline-secondary">Reset</a>
                                 </div>
                                 <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" class="d-inline-block mt-2">
