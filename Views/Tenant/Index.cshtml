@@ -49,7 +49,7 @@
                                     <a asp-action="CalculateEB" asp-route-id="@tenant.Id" class="btn btn-outline-info">Rent</a>
                                     <a asp-action="ViewHistory" asp-route-id="@tenant.Id" class="btn btn-outline-dark">History</a>
                                     <a asp-action="DeleteLastBill" asp-route-id="@tenant.Id" class="btn btn-danger">Delete Last Bill</a>
-                                    <a asp-action="UploadAndListFiles" asp-route-id="@tenant.Id" class="btn btn-info">Documents</a>
+                                    
                                     <a asp-action="ResetEB" asp-route-id="@tenant.Id" class="btn btn-outline-secondary">Reset</a>
                                 </div>
                                 <form asp-action="Delete" asp-route-id="@tenant.Id" method="post" class="d-inline-block mt-2">
@@ -111,3 +111,4 @@
         vertical-align: middle !important;
     }
 </style>
+
