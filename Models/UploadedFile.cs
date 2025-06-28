@@ -3,6 +3,8 @@
     public class UploadedFile
     {
         public int Id { get; set; }
+
+        public int TenantHouseNo { get; set; }
         public string FileName { get; set; }
         public byte[] FileContent { get; set; }
         public string MimeType { get; set; } // MIME type of the file

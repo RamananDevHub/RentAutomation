@@ -921,15 +921,22 @@ namespace RentAutomation.Controllers
 
         // GET: Upload and List Files
         [HttpGet]
-        public IActionResult UploadAndListFiles()
+        public IActionResult UploadAndListFiles(int houseNo)
         {
-            var files = _context.FilesTable.ToList(); // Fetch all uploaded files
+            var files = _context.FilesTable
+                .Where(f => f.TenantHouseNo == houseNo)
+                .OrderByDescending(f => f.UploadDate)
+                .ToList();
+
+            ViewBag.TenantHouseNo = houseNo;  // Pass to view
             return View(files);
         }
 
+
+
         // POST: Upload File
         [HttpPost]
-        public async Task<IActionResult> UploadFile(IFormFile file, string description)
+        public async Task<IActionResult> UploadFile(IFormFile file, string description, int tenantHouseNo)
         {
             if (file != null && file.Length > 0)
             {
@@ -940,21 +947,24 @@ namespace RentAutomation.Controllers
                     {
                         FileName = file.FileName,
                         FileContent = memoryStream.ToArray(),
-                        MimeType = file.ContentType, // Ensure MimeType is set
-                        FileSize = file.Length,      // Set FileSize (optional, but good practice)
+                        MimeType = GetMimeType(file.FileName),
+                        FileSize = file.Length,
                         UploadDate = DateTime.Now,
-                        Description= description
+                        Description = description,
+                        TenantHouseNo = tenantHouseNo  // <-- this is crucial!
                     };
 
                     _context.FilesTable.Add(uploadedFile);
                     await _context.SaveChangesAsync();
                 }
-                return RedirectToAction("UploadAndListFiles"); // Redirect to the same view after upload
+
+                return RedirectToAction("UploadAndListFiles", new { houseNo = tenantHouseNo });
             }
 
-            ViewBag.ErrorMessage = "Please select a file to upload.";
-            return View();
+            return RedirectToAction("UploadAndListFiles", new { houseNo = tenantHouseNo });
         }
+
+
 
         // Helper function to get the MIME type from the file extension
         private string GetMimeType(string fileName)
@@ -1027,21 +1037,23 @@ namespace RentAutomation.Controllers
 
         // GET: Delete File
         [HttpGet]
-        public IActionResult DeleteFile(int id)
+        public async Task<IActionResult> DeleteFile(int id)
         {
-            var file = _context.FilesTable.Find(id);
+            var file = await _context.FilesTable.FindAsync(id);
             if (file != null)
             {
+                int houseNo = file.TenantHouseNo;
                 _context.FilesTable.Remove(file);
-                _context.SaveChanges();
-                return RedirectToAction("UploadAndListFiles"); // Redirect to the list view after deletion
+                await _context.SaveChangesAsync();
+                return RedirectToAction("UploadAndListFiles", new { houseNo });
             }
             return NotFound();
         }
 
 
-            // Helper method to get content type based on file extension
-            private string GetContentType(string fileName)
+
+        // Helper method to get content type based on file extension
+        private string GetContentType(string fileName)
         {
             var extension = Path.GetExtension(fileName).ToLowerInvariant();
             switch (extension)
